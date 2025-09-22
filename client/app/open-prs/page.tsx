@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { PullRequest } from "@/types/pt";
 import PullRequestCard from "@/components/OpenPRCard";
+import { Box, Text } from "@mantine/core";
 
 export default function OpenPRsPage() {
     const [prs, setPrs] = useState<PullRequest[]>([]);
@@ -15,31 +16,56 @@ export default function OpenPRsPage() {
 
     const isDisabled = !owner || !repo;
 
-
     const fetchPRs = async () => {
         setError("");
         try {
             const res = await fetch(
-            `https://api.github.com/repos/${owner}/${repo}/pulls?state=open`,
-                token
-                ? { headers: { Authorization: `token ${token}` } }
-                : undefined
+                `https://api.github.com/repos/${owner}/${repo}/pulls?state=open`,
+                token ? { headers: { Authorization: `token ${token}` } } : undefined
             );
 
             if (!res.ok) {
                 throw new Error("Invalid repository name");
             }
-            const data = await res.json();
-            const mapped: PullRequest[] = data.map((pr: any) => ({
-                number: pr.number,
-                title: pr.title,
-                author: pr.user?.login ?? "Unknown",
-                createdAt: pr.created_at,
-                updatedAt: pr.updated_at,
-                requested_reviewers: pr.requested_reviewers?.map((r: any) => r.login) ?? [],
-                lastAction: pr.state,
-            }));
 
+            const data = await res.json();
+
+            const mapped: PullRequest[] = await Promise.all(
+                data.map(async (pr: any) => {
+                    let lastAction = pr.state;
+
+                    const reviewsRes = await fetch(
+                        `https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`,
+                        token ? { headers: { Authorization: `token ${token}` } } : undefined
+                    );
+                    const reviews = await reviewsRes.json();
+                    if (reviews.length > 0) {
+                        const latestReview = reviews[reviews.length - 1];
+                        if (latestReview.state === "APPROVED") lastAction = "approved";
+                        if (latestReview.state === "CHANGES_REQUESTED") lastAction = "changes_requested";
+                    }
+
+                    const commentsRes = await fetch(
+                        `https://api.github.com/repos/${owner}/${repo}/issues/${pr.number}/comments`,
+                        token ? { headers: { Authorization: `token ${token}` } } : undefined
+                    );
+                    const comments = await commentsRes.json();
+                    if (comments.length > 0) {
+                        lastAction = "commented";
+                    }
+
+                    return {
+                        number: pr.number,
+                        title: pr.title,
+                        author: pr.user?.login ?? "Unknown",
+                        createdAt: pr.created_at,
+                        updatedAt: pr.updated_at,
+                        requested_reviewers: pr.requested_reviewers?.map((r: any) => r.login) ?? [],
+                        lastAction,
+                        url: pr.html_url,
+                    };
+                })
+            );
             setPrs(mapped);
         } catch (err: any) {
             setError(err.message);
@@ -52,7 +78,7 @@ export default function OpenPRsPage() {
         <div className="p-3 text-4xl font-bold">Open Pull Requests</div>
 
         <div className="p-3 text-gray-600">
-        Track and manage currently open pull requests awaiting review
+            Track and manage currently open pull requests awaiting review
         </div>
 
         <div className="mt-8 mx-4 p-6 shadow-lg rounded-lg bg-white">
@@ -115,19 +141,28 @@ export default function OpenPRsPage() {
         </div>
 
         {/* Display fetch data */}
-        <div className="m-8 mx-4 p-6 bg-gray-50 border border-gray-300 rounded-md">
-                {error && (
-                    <div className="flex justify-center items-center h-32">
-                        <p className="text-red-500 text-2xl">{error}</p>
-                    </div>
-                )}
+        <div className="m-8 mx-4 p-1 border border-gray-300">
+            {error && (
+                <div className="flex justify-center items-center h-32">
+                    <p className="text-red-500 text-2xl">{error}</p>
+                </div>
+            )}
 
-                {prs.length === 0 && !error ? (
-                    <div className="text-gray-600 text-2xl">No open PRs</div>
-                ) : (
-                    prs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
-                )}
-            </div>
+            {prs.length > 0 && (
+                <Box pl="md">
+                    <Text size="xl" fw={700}>
+                        PR Display
+                    </Text>
+                </Box>
+            )}
+
+            {prs.length === 0 && !error ? (
+                <div className="text-gray-600 text-2xl">No open PRs</div>
+            ) : (
+                
+                prs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+            )}
+        </div>
     </>
     );
 }
