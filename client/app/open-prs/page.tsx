@@ -12,6 +12,7 @@ export default function OpenPRsPage() {
     // Default value to test (owner and repo name)
     const [owner, setOwner] = useState("chingu-voyages");
     const [repo, setRepo] = useState("V57-tier3-team-39");
+    
     const [token, setToken] = useState("");
 
     const isDisabled = !owner || !repo;
@@ -20,53 +21,15 @@ export default function OpenPRsPage() {
         setError("");
         try {
             const res = await fetch(
-                `https://api.github.com/repos/${owner}/${repo}/pulls?state=open`,
-                token ? { headers: { Authorization: `token ${token}` } } : undefined
+                `/api/prs?owner=${owner}&repo=${repo}&token=${token}`
             );
 
             if (!res.ok) {
                 throw new Error("Invalid repository name");
             }
 
-            const data = await res.json();
-
-            const mapped: PullRequest[] = await Promise.all(
-                data.map(async (pr: any) => {
-                    let lastAction = pr.state;
-
-                    const reviewsRes = await fetch(
-                        `https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`,
-                        token ? { headers: { Authorization: `token ${token}` } } : undefined
-                    );
-                    const reviews = await reviewsRes.json();
-                    if (reviews.length > 0) {
-                        const latestReview = reviews[reviews.length - 1];
-                        if (latestReview.state === "APPROVED") lastAction = "approved";
-                        if (latestReview.state === "CHANGES_REQUESTED") lastAction = "changes_requested";
-                    }
-
-                    const commentsRes = await fetch(
-                        `https://api.github.com/repos/${owner}/${repo}/issues/${pr.number}/comments`,
-                        token ? { headers: { Authorization: `token ${token}` } } : undefined
-                    );
-                    const comments = await commentsRes.json();
-                    if (comments.length > 0) {
-                        lastAction = "commented";
-                    }
-
-                    return {
-                        number: pr.number,
-                        title: pr.title,
-                        author: pr.user?.login ?? "Unknown",
-                        createdAt: pr.created_at,
-                        updatedAt: pr.updated_at,
-                        requested_reviewers: pr.requested_reviewers?.map((r: any) => r.login) ?? [],
-                        lastAction,
-                        url: pr.html_url,
-                    };
-                })
-            );
-            setPrs(mapped);
+            const data: PullRequest[] = await res.json();
+            setPrs(data);
         } catch (err: any) {
             setError(err.message);
             setPrs([]);
