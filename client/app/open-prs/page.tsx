@@ -21,11 +21,12 @@ export default function OpenPRsPage() {
         setError("");
         try {
             const res = await fetch(
-                `/api/prs?owner=${owner}&repo=${repo}&token=${token}`
+                `http://localhost:4000/prs/open?owner=${owner}&repo=${repo}&token=${token}`
             );
 
             if (!res.ok) {
-                throw new Error("Invalid repository name");
+                const errData = await res.json();
+                throw new Error(errData.error || "Unknown error");
             }
 
             const data: PullRequest[] = await res.json();
