@@ -1,3 +1,5 @@
+"use client"
+
 import { Button, Card, Text } from "@mantine/core";
 import {
   IconArrowRight,
@@ -6,8 +8,15 @@ import {
 } from "@tabler/icons-react";
 import { FaRegHandshake, FaShieldHalved, FaEye } from "react-icons/fa6";
 import { FaHistory, FaRegStar } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleOpenPRPage = () => {
+    router.push("/open-prs");
+  };
+
   return (
     <main className="text-center max-w-[1280] mx-auto">
       <div style={{ backgroundColor: "#F0E7FF" }}>
@@ -29,7 +38,7 @@ export default function Home() {
               all in one beautiful dashboard.
             </p>
             <div className="mt-16">
-              <Button variant="filled" color="violet">
+              <Button variant="filled" color="violet" onClick={handleOpenPRPage}>
                 View Open PRs
                 <span className="ml-2">
                   <IconArrowRight size={18} />
@@ -93,7 +102,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
         <div className="grid max-w-[950px] mx-auto sm:grid-cols-1 md:grid-cols-3 md:gap-2">
           <div className="w-[253px] h-[154px] mx-auto my-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -180,7 +188,6 @@ export default function Home() {
             </Card>
           </div>
         </div>
-
         <div className="flex w-[336px] mx-auto mt-8 pb-16">
           <div>
             <Card shadow="sm" padding="lg" radius="md" withBorder>
