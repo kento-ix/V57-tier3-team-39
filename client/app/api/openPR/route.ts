@@ -1,7 +1,8 @@
-import fetch from "node-fetch";
-import { GitHubComment, GitHubReview, GitHubPR, PullRequest } from "../types/github";
+import { NextResponse } from "next/server";
+import { GitHubPR, GitHubComment, GitHubReview } from "@/types/github";
+import { PullRequest } from "@/types/pr";
 
-export async function fetchOpenPRs(owner: string, repo: string, token?: string): Promise<PullRequest[]> {
+async function fetchOpenPRs(owner: string, repo: string, token?: string): Promise<PullRequest[]> {
     const headers: Record<string, string> = {
         Accept: "application/vnd.github+json",
     };
@@ -21,6 +22,7 @@ export async function fetchOpenPRs(owner: string, repo: string, token?: string):
                 `https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`,
                 { headers }
             );
+
             const reviews = (await reviewsRes.json()) as GitHubReview[];
             if (reviews.length > 0) {
                 const latestReview = reviews[reviews.length - 1];
@@ -33,6 +35,7 @@ export async function fetchOpenPRs(owner: string, repo: string, token?: string):
                 `https://api.github.com/repos/${owner}/${repo}/issues/${pr.number}/comments`,
                 { headers }
             );
+
             const comments = (await commentsRes.json()) as GitHubComment[];
             if (comments.length > 0) lastAction = "commented";
 
@@ -48,6 +51,24 @@ export async function fetchOpenPRs(owner: string, repo: string, token?: string):
             };
         })
     );
-
     return mapped;
+}
+
+// API Route
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const owner = searchParams.get("owner");
+    const repo = searchParams.get("repo");
+    const token = searchParams.get("token") || process.env.GITHUB_TOKEN;
+
+    if (!owner || !repo) {
+        return NextResponse.json({ error: "Owner and repo are required" }, { status: 400 });
+    }
+
+    try {
+        const prs = await fetchOpenPRs(owner, repo, token ?? undefined);
+        return NextResponse.json(prs);
+    } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 });
+    }
 }
