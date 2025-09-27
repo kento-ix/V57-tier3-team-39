@@ -62,41 +62,44 @@ export default function OpenPRsPage() {
 
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">
+                    <Text component="label" size="lg" className="block font-medium mb-1">
                         Repository Owner
-                    </label>
+                    </Text>
                     <input
                         type="text"
                         value={owner}
                         onChange={(e) => setOwner(e.target.value)}
                         placeholder="e.g... facebook"
+                        style={{fontSize: "20px"}}
                         className="w-full border border-gray-300 px-3 py-2 rounded-md"
                     />
                 </div>
 
                 <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">
+                    <Text component="label" size="lg" className="block font-medium mb-1">
                         Repository Name
-                    </label>
+                    </Text>
                     <input
                         type="text"
                         value={repo}
                         onChange={(e) => setRepo(e.target.value)}
                         placeholder="e.g... react"
+                        style={{fontSize: "20px"}}
                         className="w-full border border-gray-300 px-3 py-2 rounded-md"
                     />
                 </div>
             </div>
 
             <div className="mt-4">
-                <label className="block text-sm font-medium mb-1">
+                <Text component="label" size="lg" className="block font-medium mb-1">
                     GitHub Personal Access Token (Optional)
-                </label>
+                </Text>
                 <input
                     type="password"
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
                     placeholder="ghp_..."
+                    style={{fontSize: "20px"}}
                     className="w-full border border-gray-300 px-3 py-2 rounded-md"
                 />
             </div>
@@ -105,6 +108,7 @@ export default function OpenPRsPage() {
                 <button
                     onClick={fetchPRs}
                     disabled={isDisabled}
+                    style={{fontSize: "20px"}}
                     className={`px-4 py-2 rounded-md text-white ${
                         isDisabled
                         ? "bg-blue-300 cursor-not-allowed"
