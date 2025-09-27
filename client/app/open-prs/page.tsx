@@ -31,12 +31,15 @@ export default function OpenPRsPage() {
             const mapped: PullRequest[] = data.map((pr: any) => ({
                 number: pr.number,
                 title: pr.title,
-                author: pr.user?.login ?? "Unknown",
-                createdAt: pr.created_at,
-                updatedAt: pr.updated_at,
-                requested_reviewers: pr.requested_reviewers?.map((r: any) => r.login) ?? [],
-                lastAction: pr.lastAction,
-                url: pr.url,
+                author: pr.author ?? pr.user?.login ?? "Unknown",
+                createdAt: pr.createdAt ?? pr.created_at ?? "",
+                updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
+                requested_reviewers:
+                    pr.requested_reviewers?.map((r: any) => r.login) ??
+                    pr.requestedReviewers ??
+                    [],
+                lastAction: pr.lastAction ?? "open",
+                url: pr.url ?? pr.html_url ?? "",
             }));
 
             setPrs(mapped);

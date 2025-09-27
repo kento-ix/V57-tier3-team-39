@@ -24,43 +24,39 @@ export default function PullRequestCard({ pr }: Props) {
         }
     };
 
+    const created = pr.createdAt ? new Date(pr.createdAt) : new Date(NaN);
+    const createdText = isNaN(created.getTime())
+        ? "Unknown"
+        : created.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
     return (
         <Card padding="lg" radius={0} className="mb-4 border-t-2 border-gray-400">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center">
                 <div>
-                    <Text fw={700} size="lg">
+                    <Text fw={800} size="xl">
                         <span className="bg-gray-200 px-2 py-1 rounded text-sm">
                             #{pr.number}
                         </span>
                         {actionIcon()}
-                        <a
-                            href={pr.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline"
-                        >
+                        <a href={pr.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                             {pr.title}
                         </a>
                     </Text>
 
-                    <Text size="sm" c="dimmed">
-                        Opened by: {pr.author} on{" "}
-                        {new Date(pr.createdAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                        })}
+                    <Text size="md" c="dimmed">
+                        Opened by: @{pr.author ?? "Unknown"} on {createdText}
                     </Text>
 
-                    <Text size="sm" c="dimmed">
+                    <Text size="md" c="dimmed">
                         Last Action: {pr.lastAction} ()
                     </Text>
                 </div>
 
-                <Text size="sm" c="dimmed" className="mt-2 md:mt-0">
+                <Text size="md" c="dimmed" className="mt-2 md:mt-0">
                     Reviewers:{" "}
-                    {pr.requested_reviewers.length > 0
-                    ? pr.requested_reviewers.join(", ")
-                    : "None"}
+                    {pr.requested_reviewers && pr.requested_reviewers.length > 0
+                        ? pr.requested_reviewers.join(", ")
+                        : "None"}
                 </Text>
             </div>
         </Card>
