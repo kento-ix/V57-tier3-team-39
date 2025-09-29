@@ -54,7 +54,7 @@ export default function OpenPRsPage() {
     };
 
   return (
-    <div style={{ backgroundColor: "#F0E7FF"}}>
+    <div>
         <div className="p-3 text-4xl font-bold text-center" style={{ color: "#2D3748"}}>Open Pull Requests</div>
 
         <div className="mt-8 mx-4 p-6 shadow-lg rounded-lg bg-white lg:max-w-4xl lg:mx-auto">
