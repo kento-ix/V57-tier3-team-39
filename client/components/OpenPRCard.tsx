@@ -12,13 +12,13 @@ export default function PullRequestCard({ pr }: Props) {
     const actionIcon = () => {
         switch (pr.lastAction) {
             case "open":
-                return <FaRegCheckCircle className="inline text-green-500 mx-1" />;
+                return <FaRegCheckCircle className="inline text-green-500 mx-3 size-6" />;
             case "approved":
-                return <FaRegCheckCircle className="inline text-green-700 mx-1" />;
+                return <FaRegCheckCircle className="inline text-green-700 mx-3 size-6" />;
             case "commented":
-                return <FaRegCommentDots className="inline text-blue-500 mx-1" />;
+                return <FaRegCommentDots className="inline text-blue-500 mx-3 size-6" />;
             case "changes_requested":
-                return <FaRegEdit className="inline text-red-500 mx-1" />;
+                return <FaRegEdit className="inline text-red-500 mx-3 size-6" />;
             default:
                 return null;
         }
@@ -31,33 +31,37 @@ export default function PullRequestCard({ pr }: Props) {
 
     return (
         <Card padding="lg" radius={0} className="mb-4 border-t-2 border-gray-400">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                <div>
-                    <Text fw={800} size="xl">
-                        <span className="bg-gray-200 px-2 py-1 rounded text-sm">
-                            #{pr.number}
-                        </span>
-                        {actionIcon()}
-                        <a href={pr.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.5fr_2fr_2fr] lg:gap-2">
+                <Text fw={700} size="xl">
+                    <span className="px-2 py-1.5 rounded text-sm lg:text-lg text-white shadow-md" style={{ backgroundColor: "#805AD5"}}>
+                        #{pr.number}
+                    </span>
+                </Text>
+
+                <div>{actionIcon()}</div>
+
+                <div className="lg:mx-auto text-left lg:max-w-lg">
+                    <Text fw={700}>
+                        <a href={pr.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline lg:text-2xl">
                             {pr.title}
                         </a>
                     </Text>
 
-                    <Text size="md" c="dimmed">
+                    <div className="text-md lg:text-lg" style={{ color: "#2D3748"}}>
                         Opened by: @{pr.author ?? "Unknown"} on {createdText}
-                    </Text>
-
-                    <Text size="md" c="dimmed">
+                    </div>
+                    
+                    <div className="text-md lg:text-lg" style={{ color: "#2D3748"}}>
                         Last Action: {pr.lastAction} ()
-                    </Text>
+                    </div>
                 </div>
 
-                <Text size="md" c="dimmed" className="mt-2 md:mt-0">
+                <div className="lg:justify-self-end" style={{ color: "#2D3748"}}>
                     Reviewers:{" "}
                     {pr.requested_reviewers && pr.requested_reviewers.length > 0
                         ? pr.requested_reviewers.join(", ")
                         : "None"}
-                </Text>
+                </div>
             </div>
         </Card>
     );
