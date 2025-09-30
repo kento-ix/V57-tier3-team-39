@@ -4,18 +4,22 @@ import { useState } from "react";
 import type { PullRequest } from "@/types/pr";
 import PullRequestCard from "@/components/OpenPRCard";
 import { Box, Text } from "@mantine/core";
+import { BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
 
 export default function OpenPRsPage() {
     const [prs, setPrs] = useState<PullRequest[]>([]);
     const [error, setError] = useState("");
-
     // Default value to test (owner and repo name)
     const [owner, setOwner] = useState("chingu-voyages");
     const [repo, setRepo] = useState("V57-tier3-team-39");
-
     const [token, setToken] = useState("");
+    const [page, setPage] = useState(1);
 
     const isDisabled = !owner || !repo;
+    const PAGE_SIZE = 3;
+    const totalPages = Math.max(1, Math.ceil(prs.length / PAGE_SIZE));
+    const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
 
     const fetchPRs = async () => {
         setError("");
@@ -50,14 +54,10 @@ export default function OpenPRsPage() {
     };
 
   return (
-    <>
-        <div className="p-3 text-4xl font-bold">Open Pull Requests</div>
+    <div>
+        <div className="p-3 text-4xl font-bold text-center" style={{ color: "#2D3748"}}>Open Pull Requests</div>
 
-        <div className="p-3 text-gray-600">
-            Track and manage currently open pull requests awaiting review
-        </div>
-
-        <div className="mt-8 mx-4 p-6 shadow-lg rounded-lg bg-white">
+        <div className="mt-8 mx-4 p-6 shadow-lg rounded-lg bg-white lg:max-w-4xl lg:mx-auto">
             <h2 className="text-xl font-bold mb-4">Repository Settings</h2>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -121,7 +121,7 @@ export default function OpenPRsPage() {
         </div>
 
         {/* Display fetch data */}
-        <div className="m-8 mx-4 p-1 border border-gray-300">
+        <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
             {error && (
                 <div className="flex justify-center items-center h-32">
                     <p className="text-red-500 text-2xl">{error}</p>
@@ -129,19 +129,46 @@ export default function OpenPRsPage() {
             )}
 
             {prs.length > 0 && (
-                <Box pl="md">
+                <div className="pl-6">
                     <Text size="xl" fw={700}>
                         PR Display
                     </Text>
-                </Box>
+                </div>
             )}
 
             {prs.length === 0 && !error ? (
                 <div className="text-gray-600 text-2xl">No open PRs</div>
             ) : (
-                prs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+                paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
             )}
         </div>
-    </>
+
+        {prs.length > 1 && (
+            <div className="flex items-center justify-center gap-6 mb-8">
+                <button
+                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={page === 1}
+                    className={`py-2 ${page === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                    style={{ color: "#805AD5", fontSize: "2rem" }}
+                >
+                    <BiSolidLeftArrow />
+                </button>
+
+                <span className="text-xl font-semibold" style={{ color: "#2D3748" }}>
+                    {page} / {totalPages}
+                </span>
+
+                <button
+                    onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={page === totalPages}
+                    className={`py-2 ${page === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                    style={{ color: "#805AD5", fontSize: "2rem" }}
+                >
+                    <BiSolidRightArrow />
+                </button>
+            </div>
+
+        )}
+    </div>
   );
 }
