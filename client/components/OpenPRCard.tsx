@@ -30,8 +30,49 @@ export default function PullRequestCard({ pr }: Props) {
         : created.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
     return (
-        <Card padding="lg" radius={0} className="mb-4 border-t-2 border-gray-400">
-            <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.5fr_2fr_2fr] lg:gap-2">
+        <Card padding="lg" radius={0} className="border-t-2 border-gray-400">
+            {/* Mobile design */}
+            <div>
+                <div className="flex flex-row items-center pb-2 lg:hidden">
+                    <Text fw={700} size="xl">
+                        <span className="px-2 py-1.5 rounded text-sm text-white shadow-md" style={{ backgroundColor: "#805AD5"}}>
+                        #{pr.number}
+                        </span>
+                    </Text>
+
+                    <div>{actionIcon()}</div>
+
+                    <Text fw={700}>
+                        <a 
+                            href={pr.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-blue-600 hover:underline block truncate"
+                        >
+                            {pr.title}
+                        </a>
+                    </Text>
+                </div>
+
+                <div className="text-md lg:text-lg lg:hidden" style={{ color: "#2D3748"}}>
+                    Opened by: @{pr.author ?? "Unknown"} . {createdText}
+                </div>
+                
+                <div className="text-md lg:text-lg lg:hidden" style={{ color: "#2D3748"}}>
+                    Last Action: {pr.lastAction} ()
+                </div>
+
+                <div className="lg:justify-self-end lg:hidden" style={{ color: "#2D3748"}}>
+                    Reviewers:{" "}
+                    {pr.requested_reviewers && pr.requested_reviewers.length > 0
+                        ? pr.requested_reviewers.join(", ")
+                        : "None"}
+                </div>
+
+            </div>
+
+            {/* Desktop and Tablet design */}
+            <div className="hidden lg:grid lg:grid-cols-[1fr_0.5fr_2fr_2fr] lg:gap-2">
                 <Text fw={700} size="xl">
                     <span className="px-2 py-1.5 rounded text-sm lg:text-lg text-white shadow-md" style={{ backgroundColor: "#805AD5"}}>
                         #{pr.number}
@@ -48,7 +89,7 @@ export default function PullRequestCard({ pr }: Props) {
                     </Text>
 
                     <div className="text-md lg:text-lg" style={{ color: "#2D3748"}}>
-                        Opened by: @{pr.author ?? "Unknown"} on {createdText}
+                        Opened by: @{pr.author ?? "Unknown"} . {createdText}
                     </div>
                     
                     <div className="text-md lg:text-lg" style={{ color: "#2D3748"}}>
