@@ -121,7 +121,7 @@ export default function OpenPRsPage() {
         </div>
 
         {/* Display fetch data */}
-        <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
+        <div className="m-8 mx-4 p-1 border-1 border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
             {error && (
                 <div className="flex justify-center items-center h-32">
                     <p className="text-red-500 text-2xl">{error}</p>
@@ -137,7 +137,13 @@ export default function OpenPRsPage() {
             )}
 
             {prs.length === 0 && !error ? (
-                <div className="text-gray-600 text-2xl">No open PRs</div>
+                <div 
+                    className="text-gray-600 text-2xl text-center"
+                    role="status"
+                    aria-live="polite"
+                >
+                    🎉 No open pull requests right now
+                </div>
             ) : (
                 paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
             )}
