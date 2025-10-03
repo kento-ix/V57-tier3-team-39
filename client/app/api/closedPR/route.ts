@@ -48,6 +48,9 @@ async function fetchOpenPRs(owner: string, repo: string, token?: string): Promis
                 requested_reviewers: pr.requested_reviewers?.map((r) => r.login) ?? [],
                 lastAction,
                 url: pr.html_url,
+                mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
+                closedAt: pr.closedAt ?? pr.closed_at ?? "",
+                state: pr.state ?? "",
             };
         })
     );

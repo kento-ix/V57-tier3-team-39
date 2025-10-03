@@ -35,6 +35,18 @@ export default function PullRequestCard({ pr }: Props) {
     ? "Unknown"
     : created.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
+  const merged = pr.mergedAt ? new Date(pr.mergedAt) : new Date(NaN);
+  const mergedText = isNaN(merged.getTime())
+    ? "Unknown"
+    : merged.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+  const isClosedPR = pr.state === "closed" ? true : false;
+
+  const closed = pr.closedAt ? new Date(pr.closedAt) : new Date(NaN);
+  const closedText = isNaN(closed.getTime())
+    ? "Unknown"
+    : closed.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
   return (
     <Card padding="lg" radius={0} className="border-t-2 border-gray-400">
       {/* Mobile design */}
@@ -116,6 +128,33 @@ export default function PullRequestCard({ pr }: Props) {
           <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
             Opened by: @{pr.author ?? "Unknown"} . {createdText}
           </div>
+
+          {!isClosedPR && (
+            <div
+              className="text-md lg:text-lg lg:hidden"
+              style={{ color: "#2D3748" }}
+            >
+              Last Action: {pr.lastAction} ()
+            </div>
+          )}
+
+          {isClosedPR && mergedText !== "Unknown" && (
+            <div
+              className="text-md lg:text-lg lg:hidden"
+              style={{ color: "#2D3748" }}
+            >
+              Merged: {mergedText}
+            </div>
+          )}
+
+          {isClosedPR && mergedText == "Unknown" && (
+            <div
+              className="text-md lg:text-lg lg:hidden"
+              style={{ color: "#2D3748" }}
+            >
+              Closed without merged: {closedText}
+            </div>
+          )}
 
           <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
             Last Action: {pr.lastAction} ()

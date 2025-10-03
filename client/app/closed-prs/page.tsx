@@ -47,6 +47,9 @@ export default function ClosedPRsPage() {
           [],
         lastAction: pr.lastAction ?? "open",
         url: pr.url ?? pr.html_url ?? "",
+        mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
+        closedAt: pr.closedAt ?? pr.closed_at ?? "",
+        state: pr.state ?? "",
       }));
 
       setPrs(mapped);
