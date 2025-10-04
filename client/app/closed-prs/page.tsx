@@ -42,7 +42,7 @@ export default function ClosedPRsPage() {
         createdAt: pr.createdAt ?? pr.created_at ?? "",
         updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
         requested_reviewers:
-          pr.requested_reviewers?.map((r: any) => r.login) ??
+          pr.requested_reviewers?.map((r: any) => `@${r.login}`) ??
           pr.requestedReviewers ??
           [],
         lastAction: pr.lastAction ?? "open",

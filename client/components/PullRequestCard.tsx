@@ -40,7 +40,8 @@ export default function PullRequestCard({ pr }: Props) {
     ? "Unknown"
     : merged.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-  const isClosedPR = pr.state === "closed" ? true : false;
+  const isClosedPR = pr.state === "closed";
+  const isMergedPR = Boolean(pr.mergedAt);
 
   const closed = pr.closedAt ? new Date(pr.closedAt) : new Date(NaN);
   const closedText = isNaN(closed.getTime())
@@ -82,12 +83,32 @@ export default function PullRequestCard({ pr }: Props) {
           Opened by: @{pr.author ?? "Unknown"} . {createdText}
         </div>
 
-        <div
-          className="text-md lg:text-lg lg:hidden"
-          style={{ color: "#2D3748" }}
-        >
-          Last Action: {pr.lastAction} ()
-        </div>
+        {!isClosedPR && (
+          <div
+            className="text-md lg:text-lg lg:hidden"
+            style={{ color: "#2D3748" }}
+          >
+            Last Action: {pr.lastAction} ()
+          </div>
+        )}
+
+        {isClosedPR && isMergedPR && (
+          <div
+            className="text-md lg:text-lg lg:hidden"
+            style={{ color: "#2D3748" }}
+          >
+            Merged: {mergedText}
+          </div>
+        )}
+
+        {isClosedPR && !isMergedPR && (
+          <div
+            className="text-md lg:text-lg lg:hidden"
+            style={{ color: "#2D3748" }}
+          >
+            Closed without merged: {closedText}
+          </div>
+        )}
 
         <div
           className="lg:justify-self-end lg:hidden"
@@ -130,35 +151,22 @@ export default function PullRequestCard({ pr }: Props) {
           </div>
 
           {!isClosedPR && (
-            <div
-              className="text-md lg:text-lg lg:hidden"
-              style={{ color: "#2D3748" }}
-            >
+            <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
               Last Action: {pr.lastAction} ()
             </div>
           )}
 
-          {isClosedPR && mergedText !== "Unknown" && (
-            <div
-              className="text-md lg:text-lg lg:hidden"
-              style={{ color: "#2D3748" }}
-            >
+          {isClosedPR && isMergedPR && (
+            <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
               Merged: {mergedText}
             </div>
           )}
 
-          {isClosedPR && mergedText == "Unknown" && (
-            <div
-              className="text-md lg:text-lg lg:hidden"
-              style={{ color: "#2D3748" }}
-            >
+          {isClosedPR && !isMergedPR && (
+            <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
               Closed without merged: {closedText}
             </div>
           )}
-
-          <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
-            Last Action: {pr.lastAction} ()
-          </div>
         </div>
 
         <div className="lg:justify-self-end" style={{ color: "#2D3748" }}>
