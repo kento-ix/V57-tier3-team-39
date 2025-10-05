@@ -59,7 +59,7 @@ export default function OpenPRsPage() {
   return (
     <div>
       <h1 className="p-3 text-4xl font-bold text-center">Open Pull Requests</h1>
-      <RepoSettingsForm onFetch={fetchPRs} />
+      <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
