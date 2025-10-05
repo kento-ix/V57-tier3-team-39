@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { GitHubPR, GitHubComment, GitHubReview } from "@/types/github";
 import { PullRequest } from "@/types/pr";
 
-async function fetchOpenPRs(owner: string, repo: string, token?: string): Promise<PullRequest[]> {
+async function fetchClosedPRs(owner: string, repo: string, token?: string): Promise<PullRequest[]> {
     const headers: Record<string, string> = {
         Accept: "application/vnd.github+json",
     };
@@ -48,8 +48,8 @@ async function fetchOpenPRs(owner: string, repo: string, token?: string): Promis
                 requested_reviewers: pr.requested_reviewers?.map((r) => r.login) ?? [],
                 lastAction,
                 url: pr.html_url,
-                mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
-                closedAt: pr.closedAt ?? pr.closed_at ?? "",
+                mergedAt: pr.merged_at ?? "",
+                closedAt: pr.closed_at ?? "",
                 state: pr.state ?? "",
             };
         })
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const prs = await fetchOpenPRs(owner, repo, token ?? undefined);
+        const prs = await fetchClosedPRs(owner, repo, token ?? undefined);
         return NextResponse.json(prs);
     } catch (err: any) {
         return NextResponse.json({ error: err.message }, { status: 500 });
