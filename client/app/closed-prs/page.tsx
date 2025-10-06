@@ -41,10 +41,7 @@ export default function ClosedPRsPage() {
         author: pr.author ?? pr.user?.login ?? "Unknown",
         createdAt: pr.createdAt ?? pr.created_at ?? "",
         updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
-        requested_reviewers:
-          pr.requested_reviewers?.map((r: any) => `@${r.login}`) ??
-          pr.requestedReviewers ??
-          [],
+        requested_reviewers: pr.requested_reviewers ?? [],
         lastAction: pr.lastAction ?? "open",
         url: pr.url ?? pr.html_url ?? "",
         mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
