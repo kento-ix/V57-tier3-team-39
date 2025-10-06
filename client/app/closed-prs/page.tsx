@@ -23,7 +23,7 @@ export default function ClosedPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
 
   const PAGE_SIZE = 3;
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
