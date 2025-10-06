@@ -13,8 +13,11 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: "Owner and repo are required" }, { status: 400 });
     }
 
+    const limitParam = searchParams.get("limit");
+    const limit = limitParam ? Number(limitParam) : 10;
+
     try {
-        const prs = await fetchClosedPRs(owner, repo, token ?? undefined);
+        const prs = await fetchClosedPRs(owner, repo, token ?? undefined, limit);
         return NextResponse.json(prs);
     } catch (err: any) {
         return NextResponse.json({ error: err.message }, { status: 500 });

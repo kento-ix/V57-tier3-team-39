@@ -1,5 +1,6 @@
 "use client";
 import { useAtom } from "jotai";
+import { useState } from "react";
 import {
   openPRsAtom,
   openErrorAtom,
@@ -22,6 +23,8 @@ export default function OpenPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
+  const [limit, setLimit] = useState(10);
+
   const PAGE_SIZE = 3;
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -29,8 +32,9 @@ export default function OpenPRsPage() {
     setError("");
     try {
       const res = await fetch(
-        `/api/openPR?owner=${owner}&repo=${repo}&token=${token}`
+        `/api/openPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
       );
+
       if (!res.ok) throw new Error("Invalid repository name");
 
       const data = await res.json();
@@ -57,6 +61,18 @@ export default function OpenPRsPage() {
     <div>
       <h1 className="p-3 text-4xl font-bold text-center">Open Pull Requests</h1>
       <RepoSettingsForm onFetch={fetchPRs} />
+
+      <div className="flex justify-center gap-2 my-4">
+        <label>Max PRs: </label>
+        <input
+            type="number"
+            min={1}
+            max={50}
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            className="border px-2 py-1"
+        />
+      </div>
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
