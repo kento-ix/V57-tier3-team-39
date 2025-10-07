@@ -37,7 +37,7 @@ export default function ClosedPRsPage() {
       const res = await fetch(
         `/api/closedPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
       );
-      
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -88,8 +88,14 @@ export default function ClosedPRsPage() {
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
         {error && (
-          <div className="flex justify-center items-center h-32">
+          <div className="flex flex-col justify-center items-center h-48 gap-4 text-center">
             <p className="text-red-500 text-2xl">{error}</p>
+            <button
+              onClick={fetchPRs}
+              className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-700"
+            >
+              Retry
+            </button>
           </div>
         )}
 
