@@ -31,6 +31,7 @@ export default function OpenPRsPage() {
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const fetchPRs = async () => {
+    setLoading(true);
     setError("");
     try {
       const res = await fetch(
