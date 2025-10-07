@@ -1,6 +1,7 @@
 "use client";
 import { useAtom } from "jotai";
 import { useState } from "react";
+import { LoadingOverlay } from "@mantine/core";
 import {
   openPRsAtom,
   openErrorAtom,
@@ -13,7 +14,7 @@ import RepoSettingsForm from "@/components/form/RepoSettingForm";
 import PullRequestCard from "@/components/PullRequestCard";
 import Pagination from "@/components/button/Pagination";
 import type { PullRequest } from "@/types/pr";
-import { Text } from "@mantine/core";
+import { Text, Box } from "@mantine/core";
 
 export default function OpenPRsPage() {
   const [prs, setPrs] = useAtom(openPRsAtom);
@@ -24,6 +25,7 @@ export default function OpenPRsPage() {
   const [token] = useAtom(tokenAtom);
 
   const [limit, setLimit] = useState(5);
+  const [loading, setLoading] = useState(false);
 
   const PAGE_SIZE = 3;
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -34,7 +36,6 @@ export default function OpenPRsPage() {
       const res = await fetch(
         `/api/openPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
       );
-
       if (!res.ok) throw new Error("Invalid repository name");
 
       const data = await res.json();
@@ -50,12 +51,14 @@ export default function OpenPRsPage() {
         url: pr.url ?? pr.html_url ?? "",
       }));
 
-      setPrs(mapped);
-    } catch (err: any) {
-      setError(err.message);
-      setPrs([]);
-    }
-  };
+            setPrs(mapped);
+        } catch (err: any) {
+            setError(err.message);
+            setPrs([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   return (
     <div>
@@ -92,14 +95,20 @@ export default function OpenPRsPage() {
         )}
 
         {/* If PR not found */}
-        {paginatedPRs.length === 0 && !error ? (
-          <div className="text-gray-600 text-2xl">No open PRs</div>
-        ) : (
-          // Display each PR
-          paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
-        )}
+        <Box pos="relative">
+            <LoadingOverlay
+                visible={loading}
+                overlayProps={{ radius: 'sm', blur: 2 }}
+                loaderProps={{ color: 'purple', type: 'bars' }}
+            />
+            {paginatedPRs.length === 0 && !error ? (
+                <div className="text-gray-600 text-2xl">No open PRs</div>
+            ) : (
+                // Display each PR
+                paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+            )}
+        </Box>
       </div>
-
       <Pagination pageAtom={openPageAtom} prsAtom={openPRsAtom} />
     </div>
   );

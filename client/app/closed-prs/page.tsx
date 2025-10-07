@@ -1,6 +1,7 @@
 "use client";
 import { useAtom } from "jotai";
 import { useState } from "react";
+import { LoadingOverlay } from "@mantine/core";
 import {
   closedPRsAtom,
   closedErrorAtom,
@@ -13,7 +14,7 @@ import RepoSettingsForm from "@/components/form/RepoSettingForm";
 import PullRequestCard from "@/components/PullRequestCard";
 import Pagination from "@/components/button/Pagination";
 import type { PullRequest } from "@/types/pr";
-import { Text } from "@mantine/core";
+import { Text, Box } from "@mantine/core";
 
 export default function ClosedPRsPage() {
   const [prs, setPrs] = useAtom(closedPRsAtom);
@@ -24,11 +25,13 @@ export default function ClosedPRsPage() {
   const [token] = useAtom(tokenAtom);
 
   const [limit, setLimit] = useState(5);
+  const [loading, setLoading] = useState(false);
 
   const PAGE_SIZE = 3;
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const fetchPRs = async () => {
+    setLoading(true); 
     setError("");
     try {
       const res = await fetch(
@@ -56,6 +59,8 @@ export default function ClosedPRsPage() {
     } catch (err: any) {
       setError(err.message);
       setPrs([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,21 +91,28 @@ export default function ClosedPRsPage() {
         )}
 
         {/* PR display header */}
-        {paginatedPRs.length > 0 && (
-          <div className="pl-6">
-            <Text size="xl" fw={700}>
-              PR Display
-            </Text>
-          </div>
-        )}
+        <Box pos="relative">
+          <LoadingOverlay
+                visible={loading}
+                overlayProps={{ radius: 'sm', blur: 2 }}
+                loaderProps={{ color: 'purple', type: 'bars' }}
+          />
+          {paginatedPRs.length > 0 && (
+            <div className="pl-6">
+              <Text size="xl" fw={700}>
+                PR Display
+              </Text>
+            </div>
+          )}
 
-        {/* If PR not found */}
-        {paginatedPRs.length === 0 && !error ? (
-          <div className="text-gray-600 text-2xl">No closed PRs</div>
-        ) : (
-          // Display each PR
-          paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
-        )}
+          {/* If PR not found */}
+          {paginatedPRs.length === 0 && !error ? (
+            <div className="text-gray-600 text-2xl">No closed PRs</div>
+          ) : (
+            // Display each PR
+            paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+          )}
+        </Box>
       </div>
 
       <Pagination pageAtom={closedPageAtom} prsAtom={closedPRsAtom} />
