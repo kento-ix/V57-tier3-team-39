@@ -1,5 +1,7 @@
 "use client";
 import { useAtom } from "jotai";
+import { useState } from "react";
+import { LoadingOverlay } from "@mantine/core";
 import {
   openPRsAtom,
   openErrorAtom,
@@ -12,7 +14,7 @@ import RepoSettingsForm from "@/components/form/RepoSettingForm";
 import PullRequestCard from "@/components/PullRequestCard";
 import Pagination from "@/components/button/Pagination";
 import type { PullRequest } from "@/types/pr";
-import { Text } from "@mantine/core";
+import { Text, Box } from "@mantine/core";
 
 export default function OpenPRsPage() {
   const [prs, setPrs] = useAtom(openPRsAtom);
@@ -22,14 +24,18 @@ export default function OpenPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
+  const [limit, setLimit] = useState(5);
+  const [loading, setLoading] = useState(false);
+
   const PAGE_SIZE = 3;
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const fetchPRs = async () => {
+    setLoading(true);
     setError("");
     try {
       const res = await fetch(
-        `/api/openPR?owner=${owner}&repo=${repo}&token=${token}`
+        `/api/openPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
       );
       if (!res.ok) throw new Error("Invalid repository name");
 
@@ -41,25 +47,36 @@ export default function OpenPRsPage() {
         author: pr.author ?? pr.user?.login ?? "Unknown",
         createdAt: pr.createdAt ?? pr.created_at ?? "",
         updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
-        requested_reviewers:
-          pr.requested_reviewers?.map((r: any) => r.login) ??
-          pr.requestedReviewers ??
-          [],
+        requested_reviewers: pr.requested_reviewers ?? [],
         lastAction: pr.lastAction ?? "open",
         url: pr.url ?? pr.html_url ?? "",
       }));
 
-      setPrs(mapped);
-    } catch (err: any) {
-      setError(err.message);
-      setPrs([]);
-    }
-  };
+            setPrs(mapped);
+        } catch (err: any) {
+            setError(err.message);
+            setPrs([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   return (
     <div>
       <h1 className="p-3 text-4xl font-bold text-center">Open Pull Requests</h1>
       <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
+
+      <div className="flex justify-center gap-2 my-4">
+        <label>Max PRs: </label>
+        <input
+            type="number"
+            min={1}
+            max={50}
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            className="border px-2 py-1"
+        />
+      </div>
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
@@ -79,14 +96,26 @@ export default function OpenPRsPage() {
         )}
 
         {/* If PR not found */}
-        {paginatedPRs.length === 0 && !error ? (
-          <div className="text-gray-600 text-2xl">No open PRs</div>
-        ) : (
-          // Display each PR
-          paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
-        )}
+        <Box pos="relative">
+            <LoadingOverlay
+                visible={loading}
+                overlayProps={{ radius: 'sm', blur: 2 }}
+                loaderProps={{ color: 'purple', type: 'bars' }}
+            />
+            {paginatedPRs.length === 0 && !error ? (
+                <div 
+                  className="text-gray-600 text-2xl text-center"
+                  role="status"
+                  aria-live="polite"
+                >
+                    🎉 No open pull requests right now
+                </div>
+            ) : (
+                // Display each PR
+                paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+            )}
+        </Box>
       </div>
-
       <Pagination pageAtom={openPageAtom} prsAtom={openPRsAtom} />
     </div>
   );
