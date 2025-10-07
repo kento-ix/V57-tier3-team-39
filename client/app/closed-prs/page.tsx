@@ -24,6 +24,7 @@ export default function ClosedPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
+  const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
   const PAGE_SIZE = 3;
@@ -34,7 +35,7 @@ export default function ClosedPRsPage() {
     setError("");
     try {
       const res = await fetch(
-        `/api/closedPR?owner=${owner}&repo=${repo}&token=${token}`
+        `/api/closedPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
       );
       if (!res.ok) throw new Error("Invalid repository name");
 
@@ -46,10 +47,7 @@ export default function ClosedPRsPage() {
         author: pr.author ?? pr.user?.login ?? "Unknown",
         createdAt: pr.createdAt ?? pr.created_at ?? "",
         updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
-        requested_reviewers:
-          pr.requested_reviewers?.map((r: any) => `@${r.login}`) ??
-          pr.requestedReviewers ??
-          [],
+        requested_reviewers: pr.requested_reviewers ?? [],
         lastAction: pr.lastAction ?? "open",
         url: pr.url ?? pr.html_url ?? "",
         mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
@@ -72,6 +70,17 @@ export default function ClosedPRsPage() {
         Closed Pull Requests
       </h1>
       <RepoSettingsForm onFetch={fetchPRs} />
+      <div className="flex justify-center gap-2 my-4">
+        <label>Max PRs: </label>
+        <input
+            type="number"
+            min={1}
+            max={50}
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            className="border px-2 py-1"
+        />
+      </div>
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
