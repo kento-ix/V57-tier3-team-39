@@ -37,9 +37,11 @@ export default function OpenPRsPage() {
       const res = await fetch(
         `/api/openPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
       );
-      if (!res.ok) throw new Error("Invalid repository name");
-
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "🚨 Unable to fetch pull requests.");
+      }
 
       const mapped: PullRequest[] = data.map((pr: any) => ({
         number: pr.number,
