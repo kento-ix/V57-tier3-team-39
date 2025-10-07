@@ -91,7 +91,13 @@ export default function OpenPRsPage() {
                 loaderProps={{ color: 'purple', type: 'bars' }}
             />
             {paginatedPRs.length === 0 && !error ? (
-                <div className="text-gray-600 text-2xl">No open PRs</div>
+                <div 
+                  className="text-gray-600 text-2xl text-center"
+                  role="status"
+                  aria-live="polite"
+                >
+                    🎉 No open pull requests right now
+                </div>
             ) : (
                 // Display each PR
                 paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
