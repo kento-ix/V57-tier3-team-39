@@ -107,7 +107,13 @@ export default function ClosedPRsPage() {
 
           {/* If PR not found */}
           {paginatedPRs.length === 0 && !error ? (
-            <div className="text-gray-600 text-2xl">No closed PRs</div>
+            <div 
+              className="text-gray-600 text-2xl text-center"
+              role="status"
+              aria-live="polite"
+            >
+              ✅ No closed pull requests yet
+            </div>
           ) : (
             // Display each PR
             paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
