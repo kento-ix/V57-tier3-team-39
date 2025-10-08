@@ -24,6 +24,8 @@ export default function ClosedPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
+  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
+
   const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -34,8 +36,9 @@ export default function ClosedPRsPage() {
     setLoading(true); 
     setError("");
     try {
+      const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
       const res = await fetch(
-        `/api/closedPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
+        `/api/closedPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit}`
       );
 
       const data = await res.json();
@@ -44,7 +47,7 @@ export default function ClosedPRsPage() {
         throw new Error(data.error || "🚨 Unable to fetch pull requests.");
       }
 
-      const mapped: PullRequest[] = data.map((pr: any) => ({
+      const mapped: PullRequest[] = (data.prs || data).map((pr: any) => ({
         number: pr.number,
         title: pr.title,
         author: pr.author ?? pr.user?.login ?? "Unknown",
@@ -59,9 +62,11 @@ export default function ClosedPRsPage() {
       }));
 
       setPrs(mapped);
+      setRateLimitRemaining(data.rateLimitRemaining ?? null);
     } catch (err: any) {
       setError(err.message);
       setPrs([]);
+      setRateLimitRemaining(null);
     } finally {
       setLoading(false);
     }
@@ -84,6 +89,12 @@ export default function ClosedPRsPage() {
             className="border px-2 py-1"
         />
       </div>
+
+      {rateLimitRemaining !== null && (
+        <div className="text-gray-500 text-sm mt-2 text-center">
+          🔹 GitHub API requests remaining: {rateLimitRemaining}
+        </div>
+      )}
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}

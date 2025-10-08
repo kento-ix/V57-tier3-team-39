@@ -88,7 +88,7 @@ export default function PullRequestCard({ pr }: Props) {
             className="text-md lg:text-lg lg:hidden"
             style={{ color: "#2D3748" }}
           >
-            Last Action: {pr.lastAction} ()
+            Last Action: {pr.lastAction} by @{pr.lastActionUser ?? "Unknown"}
           </div>
         )}
 
@@ -140,7 +140,7 @@ export default function PullRequestCard({ pr }: Props) {
               href={pr.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline lg:text-2xl"
+              className="text-blue-600 hover:underline block truncate mb-3"
             >
               {pr.title}
             </a>
@@ -152,7 +152,7 @@ export default function PullRequestCard({ pr }: Props) {
 
           {!isClosedPR && (
             <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
-              Last Action: {pr.lastAction} ()
+              Last Action: {pr.lastAction} by @{pr.lastActionUser ?? "Unknown"}
             </div>
           )}
 
@@ -170,10 +170,16 @@ export default function PullRequestCard({ pr }: Props) {
         </div>
 
         <div className="lg:justify-self-end" style={{ color: "#2D3748" }}>
-          Reviewers:{" "}
-          {pr.requested_reviewers && pr.requested_reviewers.length > 0
-            ? pr.requested_reviewers.join(", ")
-            : "None"}
+          Reviewers:
+          {pr.requested_reviewers && pr.requested_reviewers.length > 0 ? (
+            <div className="ml-2">
+              {pr.requested_reviewers.map((name) => (
+                <div key={name}>@{name}</div>
+              ))}
+            </div>
+          ) : (
+            <div>None</div>
+          )}
         </div>
       </div>
     </Card>

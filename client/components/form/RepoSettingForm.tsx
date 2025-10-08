@@ -66,11 +66,9 @@ export default function RepoSettingsForm({ onFetch }: Props) {
                 <button
                     onClick={onFetch}
                     disabled={isDisabled}
-                    style={{ fontSize: "20px" }}
+                    style={{ fontSize: "20px", backgroundColor: isDisabled ? "#D6BCFA" : "#805AD5" }}
                     className={`px-4 py-2 rounded-md text-white cursor-pointer ${
-                    isDisabled
-                        ? "bg-blue-300 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
+                        isDisabled ? "cursor-not-allowed" : "hover:brightness-90"
                     }`}
                 >
                     Fetch Pull Requests

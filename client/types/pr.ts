@@ -5,6 +5,7 @@ export interface PullRequest {
     requested_reviewers: string[];
     createdAt: string;
     lastAction: string;
+    lastActionUser?: string;
     updatedAt: string;
     url: string;
     mergedAt?: string;

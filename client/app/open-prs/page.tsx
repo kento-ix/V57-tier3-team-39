@@ -24,6 +24,7 @@ export default function OpenPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
+  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
   const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -34,34 +35,30 @@ export default function OpenPRsPage() {
     setLoading(true);
     setError("");
     try {
+      // token が空でなければ URL パラメータに追加
+      const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
       const res = await fetch(
-        `/api/openPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
+        `/api/openPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit}`
       );
+
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.error || "🚨 Unable to fetch pull requests.");
       }
 
-      const mapped: PullRequest[] = data.map((pr: any) => ({
-        number: pr.number,
-        title: pr.title,
-        author: pr.author ?? pr.user?.login ?? "Unknown",
-        createdAt: pr.createdAt ?? pr.created_at ?? "",
-        updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
-        requested_reviewers: pr.requested_reviewers ?? [],
-        lastAction: pr.lastAction ?? "open",
-        url: pr.url ?? pr.html_url ?? "",
-      }));
-
-            setPrs(mapped);
-        } catch (err: any) {
-            setError(err.message);
-            setPrs([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+      // APIから返ってきた prs と rateLimitRemaining をセット
+      const prsData: PullRequest[] = data.prs || [];
+      setPrs(prsData);
+      setRateLimitRemaining(data.rateLimitRemaining ?? null);
+    } catch (err: any) {
+      setError(err.message);
+      setPrs([]);
+      setRateLimitRemaining(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -71,17 +68,23 @@ export default function OpenPRsPage() {
       <div className="flex justify-center gap-2 my-4">
         <label>Max PRs: </label>
         <input
-            type="number"
-            min={1}
-            max={50}
-            value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
-            className="border px-2 py-1"
+          type="number"
+          min={1}
+          max={50}
+          value={limit}
+          onChange={(e) => setLimit(Number(e.target.value))}
+          className="border px-2 py-1"
         />
       </div>
 
+      {rateLimitRemaining !== null && (
+        <div className="text-gray-500 text-sm mt-2 text-center">
+          🔹 GitHub API requests remaining: {rateLimitRemaining}
+        </div>
+      )}
+
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
-        {/* Display error */}
+        {/* エラー表示 */}
         {error && (
           <div className="flex flex-col justify-center items-center h-48 gap-4 text-center">
             <p className="text-red-500 text-2xl">{error}</p>
@@ -94,7 +97,7 @@ export default function OpenPRsPage() {
           </div>
         )}
 
-        {/* PR display header */}
+        {/* PR表示ヘッダー */}
         {paginatedPRs.length > 0 && (
           <div className="pl-6">
             <Text size="xl" fw={700}>
@@ -103,27 +106,28 @@ export default function OpenPRsPage() {
           </div>
         )}
 
-        {/* If PR not found */}
         <Box pos="relative">
-            <LoadingOverlay
-                visible={loading}
-                overlayProps={{ radius: 'sm', blur: 2 }}
-                loaderProps={{ color: 'purple', type: 'bars' }}
-            />
-            {paginatedPRs.length === 0 && !error ? (
-                <div 
-                  className="text-gray-600 text-2xl text-center"
-                  role="status"
-                  aria-live="polite"
-                >
-                    🎉 No open pull requests right now
-                </div>
-            ) : (
-                // Display each PR
-                paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
-            )}
+          <LoadingOverlay
+            visible={loading}
+            overlayProps={{ radius: "sm", blur: 2 }}
+            loaderProps={{ color: "purple", type: "bars" }}
+          />
+
+          {paginatedPRs.length === 0 && !error ? (
+            <div
+              className="text-gray-600 text-2xl text-center"
+              role="status"
+              aria-live="polite"
+            >
+              🎉 No open pull requests right now
+            </div>
+          ) : (
+            // PRカードを表示
+            paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+          )}
         </Box>
       </div>
+
       <Pagination pageAtom={openPageAtom} prsAtom={openPRsAtom} />
     </div>
   );
