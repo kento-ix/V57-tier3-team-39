@@ -23,13 +23,13 @@ export default function CreditsPage() {
     {
       name: "Jessica Hackett",
       role: "UX Designer",
-      linkedIn: "",
-      gitHub: "",
+      linkedIn: "https://www.linkedin.com/in/jessica-hackett",
+      gitHub: "https://github.com/mooglemoxie0018",
     },
   ];
 
   return (
-    <section className="bg-gray-50 py-12">
+    <section className="flex flex-grow bg-[#F0E7FF] py-12">
       <div className="max-w-5xl mx-auto px-6 text-center">
         <h2 className="text-3xl font-bold text-gray-800 mb-8">
           Team Project Credits
@@ -54,7 +54,6 @@ export default function CreditsPage() {
               </h3>
               <p className="text-sm text-gray-500 mt-1 mb-3">{member.role}</p>
 
-              {/* Social Links */}
               <div className="flex gap-4 text-blue-600 font-medium">
                 {member.gitHub && (
                   <a

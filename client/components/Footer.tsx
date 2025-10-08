@@ -5,10 +5,7 @@ import githubLogo from "../public/images/github-mark.png";
 
 const Footer = () => {
   return (
-    <footer
-      className="flex justify-between justify-items-center text-center max-w-[1280] mx-auto text-white py-2 px-6"
-      style={{ backgroundColor: "#805AD5" }}
-    >
+    <footer className="flex justify-between justify-items-center text-center max-w-[1280] mx-auto text-white py-2 px-6 bg-[#805AD5] w-full">
       <div>
         <Link
           target="_blank"

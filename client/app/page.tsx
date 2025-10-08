@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <main className="text-center max-w-[1280] mx-auto">
-      <div style={{ backgroundColor: "#F0E7FF" }}>
+      <div className="bg-[#F0E7FF]">
         <div
           className="text-white min-h-[884px] pt-[128px] px-[36px]"
           style={{
