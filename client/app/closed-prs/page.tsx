@@ -72,7 +72,7 @@ export default function ClosedPRsPage() {
   };
 
   return (
-    <div>
+    <div className="flex-grow">
       <h1 className="p-3 text-4xl font-bold text-center">
         Closed Pull Requests
       </h1>
