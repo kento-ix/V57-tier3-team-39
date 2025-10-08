@@ -62,8 +62,10 @@ export default function OpenPRsPage() {
 
   return (
     <div>
-      <h1 className="p-3 text-4xl font-bold text-center">Open Pull Requests</h1>
-      <RepoSettingsForm onFetch={fetchPRs} />
+      <h1 className="p-3 text-4xl font-bold text-center">
+        Open Pull Requests
+      </h1>
+      <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
 
       <div className="flex justify-center gap-2 my-4">
         <label>Max PRs: </label>

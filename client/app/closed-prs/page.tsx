@@ -25,7 +25,6 @@ export default function ClosedPRsPage() {
   const [token] = useAtom(tokenAtom);
 
   const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
-
   const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -77,16 +76,17 @@ export default function ClosedPRsPage() {
       <h1 className="p-3 text-4xl font-bold text-center">
         Closed Pull Requests
       </h1>
-      <RepoSettingsForm onFetch={fetchPRs} />
+      <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
+
       <div className="flex justify-center gap-2 my-4">
         <label>Max PRs: </label>
         <input
-            type="number"
-            min={1}
-            max={50}
-            value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
-            className="border px-2 py-1"
+          type="number"
+          min={1}
+          max={50}
+          value={limit}
+          onChange={(e) => setLimit(Number(e.target.value))}
+          className="border px-2 py-1"
         />
       </div>
 
