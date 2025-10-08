@@ -62,7 +62,7 @@ export default function OpenPRsPage() {
     };
 
   return (
-    <div>
+    <div className="flex-grow">
       <h1 className="p-3 text-4xl font-bold text-center">Open Pull Requests</h1>
       <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
 
