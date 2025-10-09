@@ -8,10 +8,13 @@ import {
 } from "@tabler/icons-react";
 import { FaRegHandshake, FaShieldHalved, FaEye } from "react-icons/fa6";
 import { FaHistory, FaRegStar } from "react-icons/fa";
+import { useRouter } from "next/navigation"; 
 
 export default function Home() {
+  const router = useRouter();
+
   const handleOpenPRPage: () => void = () => {
-    console.log("Open PR page");
+    router.push("/open-prs");
   };
 
   return (
