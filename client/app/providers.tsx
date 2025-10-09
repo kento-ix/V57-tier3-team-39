@@ -5,7 +5,7 @@ import { MantineProvider } from "@mantine/core";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider>
       {children}
     </MantineProvider>
   );
