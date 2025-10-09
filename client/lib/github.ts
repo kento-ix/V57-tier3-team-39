@@ -9,7 +9,10 @@ async function safeFetch<T>(url: string, headers: Record<string, string>): Promi
     const data: T = await res.json();
     const rateLimitRemaining = res.headers.get("X-RateLimit-Remaining");
     if (!res.ok) {
-      const msg = (data as any)?.message || `GitHub API error: ${res.status}`;
+      const msg =
+        typeof data === "object" && data !== null && "message" in data
+          ? (data as { message: string }).message
+          : `GitHub API error: ${res.status}`;
       throw new Error(msg);
     }
     return { data, rateLimitRemaining: rateLimitRemaining ? Number(rateLimitRemaining) : null };
