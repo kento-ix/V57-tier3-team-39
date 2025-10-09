@@ -11,8 +11,21 @@ export interface GitHubPR {
     state?: string; // "open" or "closed"
 }
 
-export interface GitHubReview {
-    state: string;
+export interface GitHubUser {
+    login: string;
+    id?: number;
 }
 
-export interface GitHubComment {}
+export interface GitHubReview {
+    state: "APPROVED" | "CHANGES_REQUESTED" | "COMMENTED" | string;
+    user: GitHubUser;
+    submitted_at?: string;
+    body?: string;
+}
+
+export interface GitHubComment {
+    user: GitHubUser;
+    body: string;
+    created_at: string;
+    id: number;
+}
