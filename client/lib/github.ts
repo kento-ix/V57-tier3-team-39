@@ -21,6 +21,65 @@ async function safeFetch(url: string, headers: Record<string, string>) {
   }
 }
 
+async function mapPR(
+  pr: GitHubPR,
+  owner: string,
+  repo: string,
+  headers: Record<string, string>
+): Promise<PullRequest> {
+  let lastAction = "open";
+  let lastActionUser = pr.user?.login ?? "Unknown";
+
+  // Reviews
+  const { data: reviews } = await safeFetch(
+    `https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`,
+    headers
+  ) as { data: GitHubReview[] };
+
+  if (reviews.length > 0) {
+    const latest = reviews.at(-1);
+    if (latest) {
+      if (latest.state === "APPROVED") {
+        lastAction = "approved";
+        lastActionUser = latest.user?.login ?? "Unknown";
+      }
+      if (latest.state === "CHANGES_REQUESTED") {
+        lastAction = "changes_requested";
+        lastActionUser = latest.user?.login ?? "Unknown";
+      }
+    }
+  }
+
+  // Comments
+  const { data: comments } = await safeFetch(
+    `https://api.github.com/repos/${owner}/${repo}/issues/${pr.number}/comments`,
+    headers
+  ) as { data: GitHubComment[] };
+
+  if (comments.length > 0) {
+    const latestComment = comments.at(-1);
+    if (latestComment) {
+      lastAction = "commented";
+      lastActionUser = latestComment.user?.login ?? "Unknown";
+    }
+  }
+
+  return {
+    number: pr.number,
+    title: pr.title,
+    author: pr.user?.login ?? "Unknown",
+    createdAt: pr.created_at,
+    updatedAt: pr.updated_at,
+    requested_reviewers: pr.requested_reviewers?.map(r => r.login) ?? [],
+    lastAction,
+    lastActionUser,
+    url: pr.html_url,
+    mergedAt: pr.merged_at ?? "",
+    closedAt: pr.closed_at ?? "",
+    state: pr.state ?? "",
+  };
+}
+
 export async function fetchOpenPRs(
   owner: string,
   repo: string,
@@ -28,7 +87,7 @@ export async function fetchOpenPRs(
   limit: number = 10
 ): Promise<{ prs: PullRequest[]; rateLimitRemaining: number | null }> {
   const authToken = token || process.env.GITHUB_TOKEN;
-  
+
   const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
   if (authToken) headers.Authorization = `Bearer ${authToken}`;
 
@@ -38,42 +97,8 @@ export async function fetchOpenPRs(
   );
 
   const concurrencyLimit = pLimit(3);
-
   const mapped: PullRequest[] = await Promise.all(
-    (prsData as GitHubPR[]).map((pr) =>
-      concurrencyLimit(async () => {
-        let lastAction = "open";
-        let lastActionUser = pr.user?.login ?? "Unknown";
-
-        const { data: reviews } = await safeFetch(
-          `https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`,
-          headers
-        ) as { data: GitHubReview[] };
-        if (reviews.length > 0) {
-          const latest = reviews.at(-1);
-          if (latest?.state === "APPROVED") lastAction = "approved";
-          if (latest?.state === "CHANGES_REQUESTED") lastAction = "changes_requested";
-        }
-
-        const { data: comments } = await safeFetch(
-          `https://api.github.com/repos/${owner}/${repo}/issues/${pr.number}/comments`,
-          headers
-        ) as { data: GitHubComment[] };
-        if (comments.length > 0) lastAction = "commented";
-
-        return {
-          number: pr.number,
-          title: pr.title,
-          author: pr.user?.login ?? "Unknown",
-          createdAt: pr.created_at,
-          updatedAt: pr.updated_at,
-          requested_reviewers: pr.requested_reviewers?.map(r => r.login) ?? [],
-          lastAction,
-          lastActionUser,
-          url: pr.html_url,
-        };
-      })
-    )
+    (prsData as GitHubPR[]).map(pr => concurrencyLimit(() => mapPR(pr, owner, repo, headers)))
   );
 
   return { prs: mapped, rateLimitRemaining: rateLimitRemaining ? Number(rateLimitRemaining) : null };
@@ -86,7 +111,7 @@ export async function fetchClosedPRs(
   limit: number = 10
 ): Promise<{ prs: PullRequest[]; rateLimitRemaining: number | null }> {
   const authToken = token || process.env.GITHUB_TOKEN;
-  
+
   const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
   if (authToken) headers.Authorization = `Bearer ${authToken}`;
 
@@ -96,45 +121,8 @@ export async function fetchClosedPRs(
   );
 
   const concurrencyLimit = pLimit(3);
-
   const mapped: PullRequest[] = await Promise.all(
-    (prsData as GitHubPR[]).map((pr) =>
-      concurrencyLimit(async () => {
-        let lastAction = "open";
-        let lastActionUser = pr.user?.login ?? "Unknown";
-
-        const { data: reviews } = await safeFetch(
-          `https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`,
-          headers
-        ) as { data: GitHubReview[] };
-        if (reviews.length > 0) {
-          const latest = reviews.at(-1);
-          if (latest?.state === "APPROVED") lastAction = "approved";
-          if (latest?.state === "CHANGES_REQUESTED") lastAction = "changes_requested";
-        }
-
-        const { data: comments } = await safeFetch(
-          `https://api.github.com/repos/${owner}/${repo}/issues/${pr.number}/comments`,
-          headers
-        ) as { data: GitHubComment[] };
-        if (comments.length > 0) lastAction = "commented";
-
-        return {
-          number: pr.number,
-          title: pr.title,
-          author: pr.user?.login ?? "Unknown",
-          createdAt: pr.created_at,
-          updatedAt: pr.updated_at,
-          requested_reviewers: pr.requested_reviewers?.map(r => r.login) ?? [],
-          lastAction,
-          lastActionUser,
-          url: pr.html_url,
-          mergedAt: pr.merged_at ?? "",
-          closedAt: pr.closed_at ?? "",
-          state: pr.state ?? "",
-        };
-      })
-    )
+    (prsData as GitHubPR[]).map(pr => concurrencyLimit(() => mapPR(pr, owner, repo, headers)))
   );
 
   return { prs: mapped, rateLimitRemaining: rateLimitRemaining ? Number(rateLimitRemaining) : null };

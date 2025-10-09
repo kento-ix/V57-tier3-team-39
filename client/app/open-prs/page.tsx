@@ -35,7 +35,6 @@ export default function OpenPRsPage() {
     setLoading(true);
     setError("");
     try {
-      // token が空でなければ URL パラメータに追加
       const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
       const res = await fetch(
         `/api/openPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit}`
@@ -46,8 +45,6 @@ export default function OpenPRsPage() {
       if (!res.ok) {
         throw new Error(data.error || "🚨 Unable to fetch pull requests.");
       }
-
-      // APIから返ってきた prs と rateLimitRemaining をセット
       const prsData: PullRequest[] = data.prs || [];
       setPrs(prsData);
       setRateLimitRemaining(data.rateLimitRemaining ?? null);
@@ -86,7 +83,6 @@ export default function OpenPRsPage() {
       )}
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
-        {/* エラー表示 */}
         {error && (
           <div className="flex flex-col justify-center items-center h-48 gap-4 text-center">
             <p className="text-red-500 text-2xl">{error}</p>
@@ -99,7 +95,6 @@ export default function OpenPRsPage() {
           </div>
         )}
 
-        {/* PR表示ヘッダー */}
         {paginatedPRs.length > 0 && (
           <div className="pl-6">
             <Text size="xl" fw={700}>
@@ -124,7 +119,6 @@ export default function OpenPRsPage() {
               🎉 No open pull requests right now
             </div>
           ) : (
-            // PRカードを表示
             paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
           )}
         </Box>
