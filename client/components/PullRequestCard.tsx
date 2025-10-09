@@ -69,7 +69,7 @@ export default function PullRequestCard({ pr }: Props) {
               href={pr.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline block truncate"
+              className="text-blue-600 hover:underline block overflow-hidden whitespace-nowrap text-ellipsis max-w-[50vw] sm:max-w-[70vw]"
             >
               {pr.title}
             </a>

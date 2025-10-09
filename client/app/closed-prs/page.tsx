@@ -24,7 +24,9 @@ export default function ClosedPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
-  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
+  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(
+    null
+  );
   const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +34,7 @@ export default function ClosedPRsPage() {
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const fetchPRs = async () => {
-    setLoading(true); 
+    setLoading(true);
     setError("");
     try {
       const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
@@ -98,24 +100,24 @@ export default function ClosedPRsPage() {
           </div>
         )}
 
+        {paginatedPRs.length > 0 && (
+          <div className="pl-6">
+            <Text size="xl" fw={700}>
+              PR Display
+            </Text>
+          </div>
+        )}
+
         {/* PR display header */}
         <Box pos="relative">
           <LoadingOverlay
-                visible={loading}
-                overlayProps={{ radius: 'sm', blur: 2 }}
-                loaderProps={{ color: 'purple', type: 'bars' }}
+            visible={loading}
+            overlayProps={{ radius: "sm", blur: 2 }}
+            loaderProps={{ color: "purple", type: "bars" }}
           />
-          {paginatedPRs.length > 0 && (
-            <div className="pl-6">
-              <Text size="xl" fw={700}>
-                PR Display
-              </Text>
-            </div>
-          )}
-
           {/* If PR not found */}
           {paginatedPRs.length === 0 && !error ? (
-            <div 
+            <div
               className="text-gray-600 text-2xl text-center"
               role="status"
               aria-live="polite"
@@ -124,7 +126,9 @@ export default function ClosedPRsPage() {
             </div>
           ) : (
             // Display each PR
-            paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+            paginatedPRs.map((pr) => (
+              <PullRequestCard key={pr.number} pr={pr} />
+            ))
           )}
         </Box>
       </div>
