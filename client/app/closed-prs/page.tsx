@@ -46,21 +46,9 @@ export default function ClosedPRsPage() {
         throw new Error(data.error || "🚨 Unable to fetch pull requests.");
       }
 
-      const mapped: PullRequest[] = (data.prs || data).map((pr: any) => ({
-        number: pr.number,
-        title: pr.title,
-        author: pr.author ?? pr.user?.login ?? "Unknown",
-        createdAt: pr.createdAt ?? pr.created_at ?? "",
-        updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
-        requested_reviewers: pr.requested_reviewers ?? [],
-        lastAction: pr.lastAction ?? "open",
-        url: pr.url ?? pr.html_url ?? "",
-        mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
-        closedAt: pr.closedAt ?? pr.closed_at ?? "",
-        state: pr.state ?? "",
-      }));
+      const prsData: PullRequest[] = data.prs || [];
 
-      setPrs(mapped);
+      setPrs(prsData);
       setRateLimitRemaining(data.rateLimitRemaining ?? null);
     } catch (err: any) {
       setError(err.message);

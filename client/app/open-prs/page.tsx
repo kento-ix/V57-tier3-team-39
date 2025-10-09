@@ -45,7 +45,9 @@ export default function OpenPRsPage() {
       if (!res.ok) {
         throw new Error(data.error || "🚨 Unable to fetch pull requests.");
       }
+
       const prsData: PullRequest[] = data.prs || [];
+      
       setPrs(prsData);
       setRateLimitRemaining(data.rateLimitRemaining ?? null);
     } catch (err: any) {
