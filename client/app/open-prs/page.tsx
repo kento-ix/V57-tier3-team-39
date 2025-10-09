@@ -50,8 +50,12 @@ export default function OpenPRsPage() {
       
       setPrs(prsData);
       setRateLimitRemaining(data.rateLimitRemaining ?? null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("🚨 Unable to fetch pull requests.");
+      }
       setPrs([]);
       setRateLimitRemaining(null);
     } finally {
