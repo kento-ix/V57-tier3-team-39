@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button, Card, Text } from "@mantine/core";
 import {
@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <main className="text-center max-w-[1280] mx-auto">
-      <div style={{ backgroundColor: "#F0E7FF" }}>
+      <div className="bg-[#F0E7FF]">
         <div
           className="text-white min-h-[884px] pt-[128px] px-[36px]"
           style={{
@@ -38,7 +38,11 @@ export default function Home() {
               all in one beautiful dashboard.
             </p>
             <div className="mt-16">
-              <Button variant="filled" color="violet" onClick={handleOpenPRPage}>
+              <Button
+                variant="filled"
+                color="violet"
+                onClick={handleOpenPRPage}
+              >
                 View Open PRs
                 <span className="ml-2">
                   <IconArrowRight size={18} />
@@ -49,7 +53,7 @@ export default function Home() {
         </div>
 
         <div>
-          <div className="w-[336px] mx-auto mt-16 mb-8">
+          <div className="w-[336px] mx-auto mt-10">
             <div className="h-[232px]">
               <Card shadow="sm" padding="lg" radius="md" withBorder>
                 <h2 className="text-lg font-semibold mb-2">
@@ -92,7 +96,7 @@ export default function Home() {
               </Card>
             </div>
 
-            <div className="text-center">
+            <div className="text-center mb-8">
               <h2 className="text-lg font-semibold mb-2">
                 Powerful Feature for Better PR Management
               </h2>
@@ -102,8 +106,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="grid max-w-[950px] mx-auto sm:grid-cols-1 md:grid-cols-3 md:gap-2">
-          <div className="w-[253px] h-[154px] mx-auto my-8">
+        <div className="grid max-w-[950px] mx-auto sm:grid-cols-1 lg:px-8 md:grid-cols-3 md:gap-1">
+          <div className="w-[253px] h-[154px] mx-auto mb-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <h2 className="text-lg font-semibold mb-2">
                 <span className="inline-block mr-2 align-middle">
@@ -117,7 +121,7 @@ export default function Home() {
               </p>
             </Card>
           </div>
-          <div className="w-[253px] h-[154px] mx-auto mt-8 mb-8">
+          <div className="w-[253px] h-[154px] mx-auto mb-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <h2 className="text-lg font-semibold mb-2">
                 <span className="inline-block mr-2 align-middle">
@@ -131,7 +135,7 @@ export default function Home() {
               </p>
             </Card>
           </div>
-          <div className="w-[253px] h-[154px] mx-auto mt-8 mb-8">
+          <div className="w-[253px] h-[154px] mx-auto mb-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <h2 className="text-lg font-semibold mb-2">
                 <span className="inline-block mr-2 align-middle">
@@ -145,7 +149,7 @@ export default function Home() {
               </p>
             </Card>
           </div>
-          <div className="w-[253px] h-[154px] mx-auto mt-8 mb-8">
+          <div className="w-[253px] h-[154px] mx-auto mb-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <h2 className="text-lg font-semibold mb-2">
                 <span className="inline-block mr-2 align-middle">
@@ -159,7 +163,7 @@ export default function Home() {
               </p>
             </Card>
           </div>
-          <div className="w-[253px] h-[154px] mx-auto mt-8 mb-8">
+          <div className="w-[253px] h-[154px] mx-auto mb-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <h2 className="text-lg font-semibold mb-2">
                 <span className="inline-block mr-2 align-middle">
@@ -173,7 +177,7 @@ export default function Home() {
               </p>
             </Card>
           </div>
-          <div className="w-[253px] h-[154px] mx-auto mt-8 mb-8">
+          <div className="w-[253px] h-[154px] mx-auto mb-8">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <h2 className="text-lg font-semibold mb-2">
                 <span className="inline-block mr-2 align-middle">
@@ -199,7 +203,11 @@ export default function Home() {
                 required - just enter your repository details and go!
               </p>
               <div className="flex justify-center items-center mt-4">
-                <Button variant="filled" color="violet">
+                <Button
+                  variant="filled"
+                  color="violet"
+                  onClick={handleOpenPRPage}
+                >
                   Get Started Now
                   <span className="ml-2">
                     <IconArrowRight size={18} />
