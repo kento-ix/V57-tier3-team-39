@@ -33,7 +33,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          <Link href="/">
+          <Link href="/" className="block [@media(max-width:490px)]:hidden">
             <h1 className="font-bold text-xl">PRTrackr</h1>
           </Link>
         </div>
