@@ -8,13 +8,10 @@ import {
 } from "@tabler/icons-react";
 import { FaRegHandshake, FaShieldHalved, FaEye } from "react-icons/fa6";
 import { FaHistory, FaRegStar } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();
-
-  const handleOpenPRPage = () => {
-    router.push("/open-prs");
+  const handleOpenPRPage: () => void = () => {
+    console.log("Open PR page");
   };
 
   return (
@@ -130,7 +127,7 @@ export default function Home() {
                 Team Collaboration
               </h2>
               <p>
-                See who's reviewing what and track team member contributions at
+                See who&#39; reviewing what and track team member contributions at
                 a glance
               </p>
             </Card>
@@ -199,7 +196,7 @@ export default function Home() {
                 Ready to Streamline Your PR Process?
               </h2>
               <p>
-                Start tracking your team's pull requests today. No installation
+                Start tracking your team&#39;s pull requests today. No installation
                 required - just enter your repository details and go!
               </p>
               <div className="flex justify-center items-center mt-4">

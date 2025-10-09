@@ -24,6 +24,7 @@ export default function ClosedPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
+  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
   const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -34,31 +35,25 @@ export default function ClosedPRsPage() {
     setLoading(true); 
     setError("");
     try {
+      const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
       const res = await fetch(
-        `/api/closedPR?owner=${owner}&repo=${repo}&token=${token}&limit=${limit}`
+        `/api/closedPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit}`
       );
-      if (!res.ok) throw new Error("Invalid repository name");
 
       const data = await res.json();
 
-      const mapped: PullRequest[] = data.map((pr: any) => ({
-        number: pr.number,
-        title: pr.title,
-        author: pr.author ?? pr.user?.login ?? "Unknown",
-        createdAt: pr.createdAt ?? pr.created_at ?? "",
-        updatedAt: pr.updatedAt ?? pr.updated_at ?? "",
-        requested_reviewers: pr.requested_reviewers ?? [],
-        lastAction: pr.lastAction ?? "open",
-        url: pr.url ?? pr.html_url ?? "",
-        mergedAt: pr.mergedAt ?? pr.merged_at ?? "",
-        closedAt: pr.closedAt ?? pr.closed_at ?? "",
-        state: pr.state ?? "",
-      }));
+      if (!res.ok) {
+        throw new Error(data.error || "🚨 Unable to fetch pull requests.");
+      }
 
-      setPrs(mapped);
+      const prsData: PullRequest[] = data.prs || [];
+
+      setPrs(prsData);
+      setRateLimitRemaining(data.rateLimitRemaining ?? null);
     } catch (err: any) {
       setError(err.message);
       setPrs([]);
+      setRateLimitRemaining(null);
     } finally {
       setLoading(false);
     }
@@ -71,11 +66,35 @@ export default function ClosedPRsPage() {
       </h1>
       <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
 
+      <div className="flex justify-center gap-2 my-4">
+        <label>Max PRs: </label>
+        <input
+          type="number"
+          min={1}
+          max={50}
+          value={limit}
+          onChange={(e) => setLimit(Number(e.target.value))}
+          className="border px-2 py-1"
+        />
+      </div>
+
+      {rateLimitRemaining !== null && (
+        <div className="text-gray-500 text-sm mt-2 text-center">
+          🔹 GitHub API requests remaining: {rateLimitRemaining}
+        </div>
+      )}
+
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
         {error && (
-          <div className="flex justify-center items-center h-32">
+          <div className="flex flex-col justify-center items-center h-48 gap-4 text-center">
             <p className="text-red-500 text-2xl">{error}</p>
+            <button
+              onClick={fetchPRs}
+              className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-700"
+            >
+              Retry
+            </button>
           </div>
         )}
 
