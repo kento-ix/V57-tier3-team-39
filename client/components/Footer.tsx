@@ -10,7 +10,7 @@ const Footer = () => {
         <Link
           target="_blank"
           href="https://github.com/chingu-voyages/v57-tier3-team-39"
-          className="flex items-center gap-2" // ← ここがポイント！
+          className="flex items-center gap-2"
         >
           <Image src={githubLogo} alt="GitHub Logo" width={32} height={32} />
           <span className="text-gray-800 font-medium">Github repo</span>
