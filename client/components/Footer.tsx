@@ -15,7 +15,7 @@ const Footer = () => {
         </Link>
       </div>
       <div>
-        <Link target="_blank" href="/credits">
+        <Link href="/credits">
           <p>Credits</p>
         </Link>
       </div>
