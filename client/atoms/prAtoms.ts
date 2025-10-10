@@ -2,8 +2,8 @@ import { atom } from "jotai";
 import type { PullRequest } from "@/types/pr";
 
 // Common repo info
-export const ownerAtom = atom("chingu-voyages");
-export const repoAtom = atom("V57-tier3-team-39");
+export const ownerAtom = atom("");
+export const repoAtom = atom("");
 export const tokenAtom = atom("");
 
 // Open / Closed PR state

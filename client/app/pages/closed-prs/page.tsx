@@ -24,15 +24,14 @@ export default function ClosedPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
-  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState<number | null>(5);
   const [loading, setLoading] = useState(false);
 
   const PAGE_SIZE = 3;
   const paginatedPRs = prs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const fetchPRs = async () => {
-    setLoading(true); 
+    setLoading(true);
     setError("");
     try {
       const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
@@ -49,7 +48,6 @@ export default function ClosedPRsPage() {
       const prsData: PullRequest[] = data.prs || [];
 
       setPrs(prsData);
-      setRateLimitRemaining(data.rateLimitRemaining ?? null);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -57,7 +55,6 @@ export default function ClosedPRsPage() {
         setError("🚨 Unable to fetch pull requests.");
       }
       setPrs([]);
-      setRateLimitRemaining(null);
     } finally {
       setLoading(false);
     }
@@ -70,23 +67,27 @@ export default function ClosedPRsPage() {
       </h1>
       <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
 
-      <div className="flex justify-center gap-2 my-4">
-        <label>Max PRs: </label>
+      <div className="flex justify-center items-center gap-2 my-4">
+        <label className="font-medium text-gray-800">Max PRs:</label>
         <input
-          type="number"
-          min={1}
-          max={50}
-          value={limit}
-          onChange={(e) => setLimit(Number(e.target.value))}
-          className="border px-2 py-1"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={limit === null ? "" : limit}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              if (value === "" || Number(value) === 0) {
+                setLimit(0);
+              } else {
+                setLimit(Number(value));
+              }
+            }
+          }}
+          className="border border-gray-300 rounded-md px-3 py-1.5 bg-white text-gray-900 font-sans focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none w-20"
         />
       </div>
 
-      {rateLimitRemaining !== null && (
-        <div className="text-gray-500 text-sm mt-2 text-center">
-          🔹 GitHub API requests remaining: {rateLimitRemaining}
-        </div>
-      )}
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {/* Display error */}
@@ -102,24 +103,24 @@ export default function ClosedPRsPage() {
           </div>
         )}
 
+        {paginatedPRs.length > 0 && (
+          <div className="pl-6">
+            <Text size="xl" fw={700}>
+              PR Display
+            </Text>
+          </div>
+        )}
+
         {/* PR display header */}
         <Box pos="relative">
           <LoadingOverlay
-                visible={loading}
-                overlayProps={{ radius: 'sm', blur: 2 }}
-                loaderProps={{ color: 'purple', type: 'bars' }}
+            visible={loading}
+            overlayProps={{ radius: "sm", blur: 2 }}
+            loaderProps={{ color: "purple", type: "bars" }}
           />
-          {paginatedPRs.length > 0 && (
-            <div className="pl-6">
-              <Text size="xl" fw={700}>
-                PR Display
-              </Text>
-            </div>
-          )}
-
           {/* If PR not found */}
           {paginatedPRs.length === 0 && !error ? (
-            <div 
+            <div
               className="text-gray-600 text-2xl text-center"
               role="status"
               aria-live="polite"
@@ -128,7 +129,9 @@ export default function ClosedPRsPage() {
             </div>
           ) : (
             // Display each PR
-            paginatedPRs.map((pr) => <PullRequestCard key={pr.number} pr={pr} />)
+            paginatedPRs.map((pr) => (
+              <PullRequestCard key={pr.number} pr={pr} />
+            ))
           )}
         </Box>
       </div>

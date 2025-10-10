@@ -8,27 +8,25 @@ import {
 } from "@tabler/icons-react";
 import { FaRegHandshake, FaShieldHalved, FaEye } from "react-icons/fa6";
 import { FaHistory, FaRegStar } from "react-icons/fa";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
 
-  const handleOpenPRPage: () => void = () => {
-    router.push("/open-prs");
+  const handleOpenPRPage = () => {
+    router.push("/pages/open-prs");
   };
 
   return (
-    <main className="text-center max-w-[1280] mx-auto">
-      <div className="bg-[#F0E7FF]">
+    <div className="bg-[#F0E7FF]">
+      <div className="max-w-[1280px] mx-auto">
         <div
-          className="text-white min-h-[884px] pt-[128px] px-[36px]"
+          className="text-white min-h-[884px] pt-[128px] px-[36px] bg-cover bg-center w-full"
           style={{
             backgroundImage: "url('/images/background.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
           }}
         >
-          <div className="flex-col justify-center items-center text-center max-w-[736px] mx-auto">
+          <div className="flex flex-col justify-center items-center text-center max-w-[736px] mx-auto">
             <h1 className="text-4xl font-bold ">
               Track Pull Requests Like Never Before!
             </h1>
@@ -130,8 +128,8 @@ export default function Home() {
                 Team Collaboration
               </h2>
               <p>
-                See who&#39; reviewing what and track team member contributions at
-                a glance
+                See who&#39; reviewing what and track team member contributions
+                at a glance
               </p>
             </Card>
           </div>
@@ -199,8 +197,9 @@ export default function Home() {
                 Ready to Streamline Your PR Process?
               </h2>
               <p>
-                Start tracking your team&#39;s pull requests today. No installation
-                required - just enter your repository details and go!
+                Start tracking your team&#39;s pull requests today. No
+                installation required - just enter your repository details and
+                go!
               </p>
               <div className="flex justify-center items-center mt-4">
                 <Button
@@ -218,6 +217,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
