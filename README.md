@@ -1,42 +1,63 @@
-# voyage-tasks
+# PRTrackr
+<img src="client/public/images/app_logo.png" height="60" />
 
-Your project's `readme` is as important to success as your code. For
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+# 🧭 Overview
+PRTrackr is a web application designed to help development teams efficiently track, review, and manage their GitHub Pull Requests (PRs).
+While GitHub already provides basic PR tracking, PRTrackr enhances this experience by offering a more visual, interactive, and informative dashboard — enabling teams to quickly see which PRs are waiting for review, who is responsible, and what has already been completed.
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point -
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
+The app integrates directly with the GitHub REST API to retrieve both open and closed PR data, presenting it in an easy-to-understand format that supports filtering, sorting, and historical insight.
+This tool empowers teams to collaborate more efficiently and minimize workflow bottlenecks caused by delayed PR reviews.
 
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
+# 🚀 Key Features
+### 🏠 Home Page
+- Introduces the purpose and benefits of PRTrackr.
+- Clean, responsive design emphasizing team productivity.
+- Quick navigation to open and closed PR views.
 
-> Own it & Make it your Own!
+### 🔓 Open PRs Dashboard
+- Displays a summary of all open Pull Requests from selected GitHub repositories.
+- Includes details such as:(PR number and title, Date created, Creator’s GitHub username, etc)
+- Option to save JSON data for offline testing to avoid GitHub API rate limits.
 
-## Team Documents
+### ✅ Closed PRs Dashboard
+- Lists completed or rejected Pull Requests for historical tracking.
+- Also supports JSON export for saved test data.
+- Display such as(PR number and title, Date created and closed, Assigned reviewers, etc)
 
-You may find these helpful as you work together to organize your project.
 
-- [Team Project Ideas](./docs/team_project_ideas.md)
-- [Team Decision Log](./docs/team_decision_log.md)
+# ▶️ Running The Project
+To run the app locally, from your command line interface (CLI):
+- `https://github.com/chingu-voyages/V57-tier3-team-39.git`
+- `cd V57-tier3-team-39/client`
+- `npm i && npm run dev`
 
-Meeting Agenda templates (located in the `/docs` directory in this repo):
 
-- Meeting - Voyage Kickoff --> ./docs/meeting-voyage_kickoff.docx
-- Meeting - App Vision & Feature Planning --> ./docs/meeting-vision_and_feature_planning.docx
-- Meeting - Sprint Retrospective, Review, and Planning --> ./docs/meeting-sprint_retrospective_review_and_planning.docx
-- Meeting - Sprint Open Topic Session --> ./docs/meeting-sprint_open_topic_session.docx
+# 🌐 Live version
+[PRTrackr on Vercel](https://v57-tier3-team-39-y53q.vercel.app/)
 
-## Our Team
+# Tech Stack
+- Framework: Next.Js
+- Library: React
+- Programming language: Typescript
+- State management: Jotai
+- Styling: Tailwind CSS, Mantine UI
+- APIs: Github API
+- UI Design: Figma
+- Project Management: Jira
 
-Everyone on your team should add their name along with a link to their GitHub
-& optionally their LinkedIn profiles below. Do this in Sprint #1 to validate
-your repo access and to practice PR'ing with your team _before_ you start
-coding!
+# 👥 Our Team
 
-- Xochitl Farias #1: [GitHub](https://github.com/xochfa) / [LinkedIn](https://www.linkedin.com/in/xfarias-scrum-master/)
-- Vorleak Yek #2: [GitHub](https://github.com/vorleakyek) / [LinkedIn](https://www.linkedin.com/in/vorleakyek/)
+### Developers
+- Kento Kanehira
+[GitHub](https://github.com/kento-ix) / [LinkedIn](https://www.linkedin.com/in/kento-kanehira-ixx/)
 
-  ...
+- Vorleak Yek
+[GitHub](https://github.com/vorleakyek) / [LinkedIn](https://www.linkedin.com/in/vorleakyek/)
 
-- Teammate name #n: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
+### Scrum Master
+- Xochitl Farias(Product Owner):
+[GitHub](https://github.com/xochfa) / [LinkedIn](https://www.linkedin.com/in/xfarias-scrum-master)
+
+### UI/UX Developer
+- Jessica Hackett
+[GitHub](https://github.com/mooglemoxie0018) / [LinkedIn](https://www.linkedin.com/in/jessica-hackett)
