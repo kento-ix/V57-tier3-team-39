@@ -19,7 +19,7 @@ export async function GET(req: Request) {
   try {
     const { prs, rateLimitRemaining } = await fetchClosedPRs(owner, repo, token ?? undefined, limit);
     return NextResponse.json({ prs, rateLimitRemaining });
-  } catch (err: any) {
+  } catch (err: unknown) {
     let message = "🚨 Unable to fetch pull requests. Please try again later.";
     let status = 500;
 

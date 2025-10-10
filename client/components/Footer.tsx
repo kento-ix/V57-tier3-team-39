@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import githubLogo from "../public/images/github-mark.png";
+import githubLogo from "@/public/images/github-mark.png";
 
 const Footer = () => {
   return (
@@ -10,12 +10,14 @@ const Footer = () => {
         <Link
           target="_blank"
           href="https://github.com/chingu-voyages/v57-tier3-team-39"
+          className="flex items-center gap-2"
         >
           <Image src={githubLogo} alt="GitHub Logo" width={32} height={32} />
+          <span className="text-gray-800 font-medium">Github repo</span>
         </Link>
       </div>
       <div>
-        <Link href="/credits">
+        <Link href="/pages/credits">
           <p>Credits</p>
         </Link>
       </div>
