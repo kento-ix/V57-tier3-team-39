@@ -24,7 +24,7 @@ export default function OpenPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState<number | null>(5);
   const [loading, setLoading] = useState(false);
 
   const PAGE_SIZE = 3;
