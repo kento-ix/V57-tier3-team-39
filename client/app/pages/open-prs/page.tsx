@@ -24,7 +24,6 @@ export default function OpenPRsPage() {
   const [repo] = useAtom(repoAtom);
   const [token] = useAtom(tokenAtom);
 
-  const [rateLimitRemaining, setRateLimitRemaining] = useState<number | null>(null);
   const [limit, setLimit] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -49,11 +48,13 @@ export default function OpenPRsPage() {
       const prsData: PullRequest[] = data.prs || [];
       
       setPrs(prsData);
-      setRateLimitRemaining(data.rateLimitRemaining ?? null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("🚨 Unable to fetch pull requests.");
+      }
       setPrs([]);
-      setRateLimitRemaining(null);
     } finally {
       setLoading(false);
     }
@@ -66,23 +67,26 @@ export default function OpenPRsPage() {
       </h1>
       <RepoSettingsForm onFetch={fetchPRs} prs={prs} />
 
-      <div className="flex justify-center gap-2 my-4">
-        <label>Max PRs: </label>
+      <div className="flex justify-center items-center gap-2 my-4">
+        <label className="font-medium text-gray-800">Max PRs:</label>
         <input
-          type="number"
-          min={1}
-          max={50}
-          value={limit}
-          onChange={(e) => setLimit(Number(e.target.value))}
-          className="border px-2 py-1"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={limit === null ? "" : limit}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              if (value === "" || Number(value) === 0) {
+                setLimit(0);
+              } else {
+                setLimit(Number(value));
+              }
+            }
+          }}
+          className="border border-gray-300 rounded-md px-3 py-1.5 bg-white text-gray-900 font-sans focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none w-20"
         />
       </div>
-
-      {rateLimitRemaining !== null && (
-        <div className="text-gray-500 text-sm mt-2 text-center">
-          🔹 GitHub API requests remaining: {rateLimitRemaining}
-        </div>
-      )}
 
       <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         {error && (

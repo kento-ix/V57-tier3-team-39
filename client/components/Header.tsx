@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import appLogo from "../public/images/app_logo.png";
+import appLogo from "@/public/images/app_logo.png";
 import { FaBars } from "react-icons/fa";
 import { useState } from "react";
 
@@ -44,8 +44,8 @@ const Header: React.FC = () => {
           </div>
 
           <div className="hidden md:flex justify-center items-center gap-10 lg:gap-[128px] font-medium w-1/2">
-            <Link href="/open-prs">Open PRs</Link>
-            <Link href="/closed-prs">Closed PRs</Link>
+            <Link href="/pages/open-prs">Open PRs</Link>
+            <Link href="/pages/closed-prs">Closed PRs</Link>
           </div>
         </div>
 
@@ -57,10 +57,10 @@ const Header: React.FC = () => {
 
         {isMenuOpen && (
           <div className="bg-[#805AD5] absolute top-16 right-3 text-white flex flex-col items-center gap-4 p-4 shadow-lg overflow-hidden transform transition-all duration-200 md:hidden">
-            <Link href="/open-prs" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/pages/open-prs" onClick={() => setIsMenuOpen(false)}>
               Open PRs
             </Link>
-            <Link href="/closed-prs" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/pages/closed-prs" onClick={() => setIsMenuOpen(false)}>
               {" "}
               Closed PRs
             </Link>

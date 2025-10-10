@@ -25,7 +25,7 @@ export async function GET(req: Request) {
       prs: result.prs,
       rateLimitRemaining: result.rateLimitRemaining,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     let message = "🚨 Unable to fetch pull requests. Please try again later.";
     let status = 500;
 

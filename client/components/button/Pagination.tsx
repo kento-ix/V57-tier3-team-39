@@ -2,10 +2,11 @@
 import { useAtom } from "jotai";
 import { BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
 import type { PrimitiveAtom } from "jotai";
+import { PullRequest } from "@/types/pr";
 
 interface Props {
     pageAtom: PrimitiveAtom<number>;
-    prsAtom: PrimitiveAtom<any[]>;
+    prsAtom: PrimitiveAtom<PullRequest[]>;
 }
 
 export default function Pagination({ pageAtom, prsAtom }: Props) {

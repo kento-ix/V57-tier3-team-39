@@ -14,7 +14,7 @@ export default function Home() {
   const router = useRouter();
 
   const handleOpenPRPage = () => {
-    router.push("/open-prs");
+    router.push("/pages/open-prs");
   };
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import githubLogo from "../public/images/github-mark.png";
+import githubLogo from "@/public/images/github-mark.png";
 
 const Footer = () => {
   return (
@@ -15,7 +15,7 @@ const Footer = () => {
         </Link>
       </div>
       <div>
-        <Link href="/credits">
+        <Link href="/pages/credits">
           <p>Credits</p>
         </Link>
       </div>
