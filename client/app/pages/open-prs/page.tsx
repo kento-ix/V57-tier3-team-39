@@ -189,7 +189,7 @@ export default function OpenPRsPage() {
               className="text-gray-600 text-2xl text-center p-8"
               role="status"
               aria-live="polite"
-            >
+            >j
               No PRs found for this filter
             </div>
           ) : paginatedPRs.length === 0 && !error ? (
