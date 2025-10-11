@@ -61,6 +61,7 @@ export default function RepoSettingsForm({
     <div className="mt-8 mx-4 p-6 shadow-lg rounded-lg bg-white lg:max-w-4xl lg:mx-auto">
       <h2 className="text-xl font-bold mb-4">Repository Settings</h2>
 
+      {/* Repository Owner & Name */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Text component="label" size="lg" className="block font-medium mb-1">
@@ -91,6 +92,7 @@ export default function RepoSettingsForm({
         </div>
       </div>
 
+      {/* Token */}
       <div className="mt-4">
         <div className="flex justify-between items-center mb-1">
           <Text component="label" size="lg" className="block font-medium mb-1">
@@ -132,136 +134,11 @@ export default function RepoSettingsForm({
             </a>
           </p>
         )}
-
       </div>
 
-      {/* Filter and Sort */}
-      {prs.length > 0 && (
-        <div className="mt-6">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-800 font-medium transition-colors"
-          >
-            <Search size={18} />
-            {showFilters ? "Hide Filters & Sort" : "Show Filters & Sort"}
-          </button>
-
-          {showFilters && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200">
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <Text size="lg" fw={600}>Filters</Text>
-                  {hasActiveFilters && (
-                    <button
-                      onClick={clearFilters}
-                      className="flex items-center gap-1 px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200"
-                    >
-                      <X size={14} />
-                      Clear Filters
-                    </button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Author Filter */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Author</label>
-                    <select
-                      value={filterAuthor}
-                      onChange={(e) => setFilterAuthor(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
-                    >
-                      <option value="">All Authors</option>
-                      {availableAuthors.map((author) => (
-                        <option key={author} value={author}>
-                          {author}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Reviewer Filter */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Reviewer</label>
-                    <select
-                      value={filterReviewer}
-                      onChange={(e) => setFilterReviewer(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
-                    >
-                      <option value="">All Reviewers</option>
-                      {availableReviewers.map((reviewer) => (
-                        <option key={reviewer} value={reviewer}>
-                          {reviewer}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Start Date Filter */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Start Date</label>
-                    <input
-                      type="date"
-                      value={filterStartDate}
-                      onChange={(e) => setFilterStartDate(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
-                    />
-                  </div>
-
-                  {/* End Date Filter */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">End Date</label>
-                    <input
-                      type="date"
-                      value={filterEndDate}
-                      onChange={(e) => setFilterEndDate(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* sort section */}
-              <div className="pt-4 border-t border-gray-200">
-                <Text size="lg" fw={600} className="mb-3">Sort</Text>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Sort By */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Sort By</label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as "recency" | "activity")}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
-                    >
-                      <option value="recency">Recency (Updated Date)</option>
-                      <option value="activity">Activity Level (Last Action)</option>
-                    </select>
-                  </div>
-
-                  {/* Sort Order */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Sort Order</label>
-                    <select
-                      value={sortOrder}
-                      onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
-                    >
-                      <option value="desc">
-                        {sortBy === "recency" ? "Newest First" : "Most Active First"}
-                      </option>
-                      <option value="asc">
-                        {sortBy === "recency" ? "Oldest First" : "Least Active First"}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
+      {/* Bottom Buttons */}
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
+        {/* Fetch */}
         <button
           onClick={onFetch}
           disabled={isDisabled}
@@ -270,9 +147,10 @@ export default function RepoSettingsForm({
             isDisabled ? "cursor-not-allowed" : "hover:brightness-90"
           }`}
         >
-            Fetch Pull Requests
+          Fetch Pull Requests
         </button>
 
+        {/* Save JSON */}
         <button 
           onClick={() => savePRsAsJSON(prs)}
           disabled={prs.length === 0}
@@ -284,7 +162,126 @@ export default function RepoSettingsForm({
         >
           Save PRs as JSON
         </button> 
+
+        {/* Filter/Sort */}
+        {prs.length > 0 && (
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            style={{ fontSize: "20px", backgroundColor: "#805AD5" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-white cursor-pointer hover:brightness-90"
+          >
+            <Search size={20} />
+            {showFilters ? "Hide Filters & Sort" : "Show Filters & Sort"}
+          </button>
+        )}
       </div>
+
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <Text size="lg" fw={600}>Filters</Text>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200"
+                >
+                  <X size={14} />
+                  Clear Filters
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Author */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Author</label>
+                <select
+                  value={filterAuthor}
+                  onChange={(e) => setFilterAuthor(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
+                >
+                  <option value="">All Authors</option>
+                  {availableAuthors.map((author) => (
+                    <option key={author} value={author}>{author}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Reviewer */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Reviewer</label>
+                <select
+                  value={filterReviewer}
+                  onChange={(e) => setFilterReviewer(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
+                >
+                  <option value="">All Reviewers</option>
+                  {availableReviewers.map((reviewer) => (
+                    <option key={reviewer} value={reviewer}>{reviewer}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Start Date */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Start Date</label>
+                <input
+                  type="date"
+                  value={filterStartDate}
+                  onChange={(e) => setFilterStartDate(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
+                />
+              </div>
+
+              {/* End Date */}
+              <div>
+                <label className="block text-sm font-medium mb-1">End Date</label>
+                <input
+                  type="date"
+                  value={filterEndDate}
+                  onChange={(e) => setFilterEndDate(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sort */}
+          <div className="pt-4 border-t border-gray-200">
+            <Text size="lg" fw={600} className="mb-3">Sort</Text>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Sort By</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as "recency" | "activity")}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
+                >
+                  <option value="recency">Recency (Updated Date)</option>
+                  <option value="activity">Activity Level (Last Action)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Sort Order</label>
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white"
+                >
+                  <option value="desc">
+                    {sortBy === "recency" ? "Newest First" : "Most Active First"}
+                  </option>
+                  <option value="asc">
+                    {sortBy === "recency" ? "Oldest First" : "Least Active First"}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
