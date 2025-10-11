@@ -62,7 +62,10 @@ export default function ClosedPRsPage() {
 
   return (
     <div className="flex-grow">
-      <h1 className="p-3 text-4xl font-bold text-center">
+      <h1
+        className="p-3 text-4xl font-bold text-center mt-6"
+        style={{ fontFamily: "var(--font-syne)" }}
+      >
         Closed Pull Requests
       </h1>
       <RepoSettingsForm onFetch={fetchPRs} prs={prs} />

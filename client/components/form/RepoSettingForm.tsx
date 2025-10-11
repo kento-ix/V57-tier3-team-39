@@ -2,9 +2,10 @@
 import { useAtom } from "jotai";
 import { ownerAtom, repoAtom, tokenAtom } from "@/atoms/prAtoms";
 import { Text } from "@mantine/core";
-
 import type { PullRequest } from "@/types/pr";
 import { savePRsAsJSON } from "@/lib/downloadPRs";
+import { useState } from "react";
+import { Info } from "lucide-react"; 
 
 interface Props {
   onFetch: () => void;
@@ -15,6 +16,7 @@ export default function RepoSettingsForm({ onFetch, prs }: Props) {
   const [owner, setOwner] = useAtom(ownerAtom);
   const [repo, setRepo] = useAtom(repoAtom);
   const [token, setToken] = useAtom(tokenAtom);
+  const [showInfo, setShowInfo] = useState(false);
 
   const isDisabled = !owner || !repo;
 
@@ -31,7 +33,7 @@ export default function RepoSettingsForm({ onFetch, prs }: Props) {
             type="text"
             value={owner}
             onChange={(e) => setOwner(e.target.value)}
-            placeholder="e.g... facebook"
+            placeholder="GitHub username or org (e.g. vercel)"
             style={{ fontSize: "20px" }}
             className="w-full border border-gray-300 px-3 py-2 rounded-md"
           />
@@ -45,7 +47,7 @@ export default function RepoSettingsForm({ onFetch, prs }: Props) {
             type="text"
             value={repo}
             onChange={(e) => setRepo(e.target.value)}
-            placeholder="e.g... react"
+            placeholder="Repository name (e.g. blog-platform)"
             style={{ fontSize: "20px" }}
             className="w-full border border-gray-300 px-3 py-2 rounded-md"
           />
@@ -53,18 +55,50 @@ export default function RepoSettingsForm({ onFetch, prs }: Props) {
       </div>
 
       <div className="mt-4">
-        <Text component="label" size="lg" className="block font-medium mb-1">
-          GitHub Personal Access Token (Optional)
-        </Text>
+        <div className="flex justify-between items-center mb-1">
+          <Text component="label" size="lg" className="block font-medium mb-1">
+            GitHub Personal Access Token (Optional)
+          </Text>
+
+          <button
+            type="button"
+            onClick={() => setShowInfo(!showInfo)}
+            className="w-6 h-6 flex items-center justify-center bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200"
+            aria-label="More info about token"
+          >
+            <Info size={16} />
+          </button>
+        </div>
+
         <input
           type="password"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          placeholder="ghp_..."
+          placeholder="Optional: ghp_youraccesstoken"
           style={{ fontSize: "20px" }}
           className="w-full border border-gray-300 px-3 py-2 rounded-md"
         />
+
+        {showInfo && (
+          <p className="mt-2 text-sm text-gray-700 bg-purple-50 p-3 rounded-md border border-purple-200">
+            💡 A GitHub personal access token increases API rate limits from{" "}
+            <strong>60</strong> to <strong>5,000</strong> requests per hour.
+            <br />
+            Create one at:{" "}
+            <a
+              href="https://github.com/settings/tokens"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-purple-600 underline"
+            >
+              github.com/settings/tokens
+            </a>
+          </p>
+        )}
+
       </div>
+
+
 
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
         <button
