@@ -80,7 +80,7 @@ export default function RepoSettingsForm({ onFetch, prs }: Props) {
         />
 
         {showInfo && (
-          <p className="mt-2 text-sm text-gray-700 bg-purple-50 p-3 rounded-md border border-purple-200">
+          <p className="mt-2 text-lg text-gray-700 bg-purple-50 p-3 rounded-md border border-purple-200">
             💡 A GitHub personal access token increases API rate limits from{" "}
             <strong>60</strong> to <strong>5,000</strong> requests per hour.
             <br />
