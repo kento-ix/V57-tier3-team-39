@@ -123,14 +123,13 @@ export default function RepoSettingsForm({
             💡 A GitHub personal access token increases API rate limits from{" "}
             <strong>60</strong> to <strong>5,000</strong> requests per hour.
             <br />
-            Create one at:{" "}
             <a
               href="https://github.com/settings/tokens"
               target="_blank"
               rel="noopener noreferrer"
               className="text-purple-600 underline"
             >
-              github.com/settings/tokens
+              Create one on Github{" "}
             </a>
           </p>
         )}
