@@ -65,14 +65,9 @@ export default function PullRequestCard({ pr }: Props) {
           <div>{actionIcon()}</div>
 
           <Text fw={700}>
-            <a
-              href={pr.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline block overflow-hidden whitespace-nowrap text-ellipsis max-w-[50vw] sm:max-w-[70vw]"
-            >
+            <span className="text-blue-600 block overflow-hidden whitespace-nowrap text-ellipsis max-w-[50vw] sm:max-w-[70vw]">
               {pr.title}
-            </a>
+            </span>
           </Text>
         </div>
 
@@ -136,14 +131,9 @@ export default function PullRequestCard({ pr }: Props) {
 
         <div className="lg:mx-auto text-left lg:max-w-lg">
           <Text fw={700}>
-            <a
-              href={pr.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline block truncate mb-3"
-            >
+            <span className="text-blue-600 block overflow-hidden whitespace-nowrap text-ellipsis max-w-[50vw] sm:max-w-[70vw]">
               {pr.title}
-            </a>
+            </span>
           </Text>
 
           <div className="text-md lg:text-lg" style={{ color: "#2D3748" }}>
