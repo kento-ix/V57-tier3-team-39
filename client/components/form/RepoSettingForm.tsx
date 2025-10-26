@@ -7,6 +7,7 @@ import { savePRsAsJSON } from "@/lib/downloadPRs";
 import { useState } from "react";
 import { Info, X, Search } from "lucide-react";
 
+
 interface Props {
   onFetch: () => void;
   prs: PullRequest[];

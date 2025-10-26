@@ -11,7 +11,8 @@ import {
   tokenAtom,
 } from "@/atoms/prAtoms";
 import RepoSettingsForm from "@/components/form/RepoSettingForm";
-import PullRequestCard from "@/components/PullRequestCard";
+
+import PullRequestCard from "@/components/pr-cards/PullRequestCard";
 import Pagination from "@/components/button/Pagination";
 import type { PullRequest } from "@/types/pr";
 import { Text, Box } from "@mantine/core";
@@ -26,6 +27,10 @@ export default function ClosedPRsPage() {
 
   const [limit, setLimit] = useState<number | null>(5);
   const [loading, setLoading] = useState(false);
+
+  const [prSelect, setPrSelect] = useState(false);
+  const [selectedPR, setSelectedPR] = useState<PullRequest | null>(null);
+
 
   // filter state
   const [filterAuthor, setFilterAuthor] = useState<string>("");
@@ -206,7 +211,7 @@ export default function ClosedPRsPage() {
           ) : (
             // Display each PR
             paginatedPRs.map((pr) => (
-              <PullRequestCard key={pr.number} pr={pr} />
+              <PullRequestCard key={pr.number} pr={pr} onSelect={() => setSelectedPR(pr)}/>
             ))
           )}
         </Box>
