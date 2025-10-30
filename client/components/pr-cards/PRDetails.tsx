@@ -94,26 +94,6 @@ export default function PRDetails({ pr, allPRs = [] }: PRDetailsProps) {
     );
   };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" as const },
-      tooltip: {
-        callbacks: {
-          label: (context: any) => {
-            if (context.dataset.label === "Contribution Score") {
-              return `Score: ${context.raw.toFixed(1)}`;
-            } else if (context.dataset.label === "Average Merge Days") {
-              return `Avg Merge Days: ${context.raw.toFixed(1)}`;
-            }
-            return context.raw;
-          },
-        },
-      },
-    },
-    scales: { y: { beginAtZero: true } },
-  };
-
   return (
     <Card padding="lg" radius="md" shadow="sm">
       {/* PR Header */}
@@ -179,17 +159,6 @@ export default function PRDetails({ pr, allPRs = [] }: PRDetailsProps) {
             </Text>
           ))}
         </Group>
-      )}
-
-      {/* Team Stats Graph */}
-      {userStats.length > 0 && (
-        <>
-          <Divider my="sm" />
-          <Text size="md" fw={600} mb="xs">Team Contribution & Merge Stats</Text>
-          <div style={{ maxHeight: 250, overflowX: "auto" }}>
-            <Bar data={chartData} options={chartOptions} />
-          </div>
-        </>
       )}
 
       <Text size="sm" mt="sm">
