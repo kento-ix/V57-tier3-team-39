@@ -11,7 +11,7 @@ import {
   tokenAtom,
 } from "@/atoms/prAtoms";
 import RepoSettingsForm from "@/components/form/RepoSettingForm";
-import PullRequestCard from "@/components/PullRequestCard";
+import PullRequestCard from "@/components/pr-cards/PullRequestCard";
 import Pagination from "@/components/button/Pagination";
 import type { PullRequest } from "@/types/pr";
 import { Text, Box } from "@mantine/core";
