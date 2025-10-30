@@ -198,7 +198,10 @@ export default function ClosedPRsPage() {
         }}
       >
         {currentPRIndex !== null && (
-          <PRDetails pr={paginatedPRs[currentPRIndex]} />
+          <PRDetails 
+            pr={paginatedPRs[currentPRIndex]} 
+            allPRs={filteredPRs} 
+          />
         )}
       </Modal>
     </div>

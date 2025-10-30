@@ -1,90 +1,198 @@
 "use client";
 
-import { Card, Text, Divider } from "@mantine/core";
+import { Card, Text, Divider, Group, Badge } from "@mantine/core";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
 import type { PullRequest } from "@/types/pr";
+import { calculateUserStats } from "@/lib/stats";
+import type { UserStats } from "@/types/stats";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface PRDetailsProps {
   pr: PullRequest;
+  allPRs: PullRequest[];
 }
 
-export default function PRDetails({ pr }: PRDetailsProps) {
+export default function PRDetails({ pr, allPRs = [] }: PRDetailsProps) {
   const createdAt = new Date(pr.createdAt);
   const mergedAt = pr.mergedAt ? new Date(pr.mergedAt) : null;
   const closedAt = pr.closedAt ? new Date(pr.closedAt) : null;
   const updatedAt = new Date(pr.updatedAt);
 
-  // 経過時間の計算（マージされた場合のみ）
   const mergeDuration =
     mergedAt && createdAt
       ? Math.round((mergedAt.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24))
       : null;
 
-  // PRの状態テキスト
-  const prStatus = pr.state === "closed"
-    ? pr.mergedAt
-      ? "✅ Merged"
-      : "❌ Closed (Not Merged)"
-    : "🟢 Open";
+  const prStatus =
+    pr.state === "closed" ? (pr.mergedAt ? "✅ Merged" : "❌ Closed (Not Merged)") : "🟢 Open";
+
+  // チーム統計を計算
+  const userStats: UserStats[] = calculateUserStats(allPRs);
+
+  // PR作成者とレビュー担当者を分離
+  const authorStats = userStats.find(u => u.username === pr.author);
+  const reviewerStats = userStats.filter(u =>
+    pr.requested_reviewers.includes(u.username)
+  );
+
+  // グラフ用データ（Contribution Score & Average Merge Days）
+  const chartData = {
+    labels: userStats.map(u => u.username),
+    datasets: [
+      {
+        label: "Contribution Score (高いほどチームへの貢献が大きい)",
+        data: userStats.map(u => u.contributionScore),
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderRadius: 4,
+      },
+      {
+        label: "Average Merge Days (小さいほどPRが早くマージされている)",
+        data: userStats.map(u => u.avgMergeDays),
+        backgroundColor: "rgba(255, 99, 132, 0.6)",
+        borderRadius: 4,
+      },
+    ],
+  };
+
+  const formatMergeDuration = (days: number) => {
+    if (days < 1) {
+      const hours = Math.round(days * 24);
+      return `${hours} Hours`;
+    } else {
+      const wholeDays = Math.floor(days);
+      const hours = Math.round((days - wholeDays) * 24);
+      return hours > 0 ? `${wholeDays} Day ${hours} Hours` : `${wholeDays} Day`;
+    }
+  };
+
+  const renderStarRating = (score: number) => {
+    const normalized = Math.min(Math.max(Math.round(score), 1), 5);
+    const fullStars = "★".repeat(normalized);
+    const emptyStars = "☆".repeat(5 - normalized);
+    const labels = ["Beginner", "Contributor", "Active", "Strong", "Exceptional"];
+    const label = labels[normalized - 1];
+
+    return (
+      <span>
+        <span style={{ color: "#f5b301", fontSize: "1.1rem" }}>{fullStars}</span>
+        <span style={{ color: "#ccc", fontSize: "1.1rem" }}>{emptyStars}</span>
+        <span style={{ marginLeft: 8, color: "#555", fontSize: "0.9rem" }}>
+          ({label})
+        </span>
+      </span>
+    );
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" as const },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            if (context.dataset.label === "Contribution Score") {
+              return `Score: ${context.raw.toFixed(1)}`;
+            } else if (context.dataset.label === "Average Merge Days") {
+              return `Avg Merge Days: ${context.raw.toFixed(1)}`;
+            }
+            return context.raw;
+          },
+        },
+      },
+    },
+    scales: { y: { beginAtZero: true } },
+  };
 
   return (
-    <Card padding="lg" radius="md">
-      <Text fw={700} size="xl" mb="xs" className="text-blue-600">
-        #{pr.number}: {pr.title}
-      </Text>
+    <Card padding="lg" radius="md" shadow="sm">
+      {/* PR Header */}
+      <Group align="center" mb="sm">
+        <Text fw={700} size="xl" className="text-blue-600">
+          #{pr.number}: {pr.title}
+        </Text>
+        <Badge color={pr.mergedAt ? "green" : pr.state === "closed" ? "red" : "blue"}>
+          {prStatus}
+        </Badge>
+      </Group>
 
       <Divider my="sm" />
 
-      <Text size="md">
-        <strong>Status:</strong> {prStatus}
-      </Text>
-
-      <Text size="md">
-        <strong>Author:</strong> @{pr.author}
-      </Text>
-
-      <Text size="md">
-        <strong>Reviewers:</strong>{" "}
-        {pr.requested_reviewers && pr.requested_reviewers.length > 0
-          ? pr.requested_reviewers.join(", ")
-          : "None"}
-      </Text>
-
-      <Divider my="sm" />
-
-      <Text size="sm">
-        <strong>Created At:</strong> {createdAt.toLocaleString()}
-      </Text>
-
-      <Text size="sm">
-        <strong>Last Updated:</strong> {updatedAt.toLocaleString()}
-      </Text>
-
-      {mergedAt && (
-        <Text size="sm">
-          <strong>Merged At:</strong> {mergedAt.toLocaleString()}
+      {/* Author & Reviewers */}
+      <Group mb="sm">
+        <Text size="md"><strong>Author:</strong> @{pr.author}</Text>
+        <Text size="md">
+          <strong>Reviewers:</strong>{" "}
+          {pr.requested_reviewers.length > 0 ? pr.requested_reviewers.join(", ") : "None"}
         </Text>
-      )}
+      </Group>
 
-      {closedAt && (
-        <Text size="sm">
-          <strong>Closed At:</strong> {closedAt.toLocaleString()}
-        </Text>
-      )}
+      {/* Dates */}
+      <Group mb="sm">
+        <Text size="sm"><strong>Created:</strong> {createdAt.toLocaleDateString()}</Text>
+        <Text size="sm"><strong>Updated:</strong> {updatedAt.toLocaleDateString()}</Text>
+        {mergedAt && <Text size="sm"><strong>Merged:</strong> {mergedAt.toLocaleDateString()}</Text>}
+        {closedAt && <Text size="sm"><strong>Closed:</strong> {closedAt.toLocaleDateString()}</Text>}
+      </Group>
 
       {mergeDuration !== null && (
-        <Text size="md" mt="sm">
-          <strong>⏱️ Time to Merge:</strong> {mergeDuration} days
-        </Text>
+        <Text size="md" mb="sm"><strong>⏱️ Time to Merge:</strong> {mergeDuration} days</Text>
       )}
 
       <Divider my="sm" />
 
-      <Text size="md">
-        <strong>Last Action:</strong> {pr.lastAction}{" "}
-        {pr.lastActionUser && `by @${pr.lastActionUser}`}
+      {/* Last Action */}
+      <Text size="sm" mb="sm">
+        <strong>Last Action:</strong> {pr.lastAction} {pr.lastActionUser && `by @${pr.lastActionUser}`}
       </Text>
 
-      <Text size="sm" mt="xs">
+      {/* Author Stats */}
+      {authorStats && (
+        <Group mb="sm" align="flex-start" style={{ flexDirection: "column" }}>
+          <Text size="md" fw={600}>👤 PR作成者: {pr.author}</Text>
+          <Text size="md">
+            <strong>貢献スコア:</strong> {renderStarRating(authorStats.contributionScore)}
+          </Text>
+          <Text size="md">
+            <strong>平均マージ時間:</strong> {formatMergeDuration(authorStats.avgMergeDays)}
+          </Text>
+        </Group>
+      )}
+
+      {/* Reviewer Stats */}
+      {reviewerStats.length > 0 && (
+        <Group mb="sm" align="flex-start" style={{ flexDirection: "column" }}>
+          <Text size="md" fw={600}>👥 レビュー担当者</Text>
+          {reviewerStats.map(r => (
+            <Text key={r.username} size="md">
+              <strong>@{r.username}:</strong> {renderStarRating(r.contributionScore)} / 平均マージ: {formatMergeDuration(r.avgMergeDays)}
+            </Text>
+          ))}
+        </Group>
+      )}
+
+      {/* Team Stats Graph */}
+      {userStats.length > 0 && (
+        <>
+          <Divider my="sm" />
+          <Text size="md" fw={600} mb="xs">Team Contribution & Merge Stats</Text>
+          <div style={{ maxHeight: 250, overflowX: "auto" }}>
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+        </>
+      )}
+
+      <Text size="sm" mt="sm">
         <a
           href={pr.url}
           target="_blank"
