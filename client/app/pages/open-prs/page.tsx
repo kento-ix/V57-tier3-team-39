@@ -57,8 +57,9 @@ export default function OpenPRsPage() {
         const diff = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
         return sortOrder === "asc" ? diff : -diff;
       } else if (sortBy === "activity") {
-        const activityA = new Date(a.lastAction).getTime();
-        const activityB = new Date(b.lastAction).getTime();
+        // lastAction は文字列なので日付でソート
+        const activityA = new Date(a.updatedAt).getTime();
+        const activityB = new Date(b.updatedAt).getTime();
         return sortOrder === "asc" ? activityA - activityB : activityB - activityA;
       }
       return 0;
@@ -67,6 +68,8 @@ export default function OpenPRsPage() {
 
   const filteredPRs = useMemo(() => {
     return applySort(applyFilters(prs));
+    // applyFilters と applySort は外側で固定関数なので依存配列に追加不要
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prs, filterAuthor, filterReviewer, filterStartDate, filterEndDate, sortBy, sortOrder]);
 
   const clearFilters = () => {
@@ -85,7 +88,7 @@ export default function OpenPRsPage() {
     try {
       const tokenParam = token && token.trim() !== "" ? `&token=${token}` : "";
       const res = await fetch(
-        `/api/openPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit}`
+        `/api/openPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit ?? ""}`
       );
 
       const data = await res.json();
@@ -95,7 +98,6 @@ export default function OpenPRsPage() {
       }
 
       const prsData: PullRequest[] = data.prs || [];
-      
       setPrs(prsData);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -145,11 +147,7 @@ export default function OpenPRsPage() {
           onChange={(e) => {
             const value = e.target.value;
             if (/^\d*$/.test(value)) {
-              if (value === "" || Number(value) === 0) {
-                setLimit(0);
-              } else {
-                setLimit(Number(value));
-              }
+              setLimit(value === "" ? null : Number(value));
             }
           }}
           className="border border-gray-300 rounded-md px-3 py-1.5 bg-white text-gray-900 font-sans focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none w-20"
@@ -189,7 +187,7 @@ export default function OpenPRsPage() {
               className="text-gray-600 text-2xl text-center p-8"
               role="status"
               aria-live="polite"
-            >j
+            >
               No PRs found for this filter
             </div>
           ) : paginatedPRs.length === 0 && !error ? (

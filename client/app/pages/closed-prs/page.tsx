@@ -44,6 +44,7 @@ export default function ClosedPRsPage() {
 
   const PAGE_SIZE = 3;
 
+  // フィルタ関数
   const applyFilters = (prList: PullRequest[]): PullRequest[] =>
     prList.filter((pr) => {
       const matchAuthor = !filterAuthor || pr.author === filterAuthor;
@@ -53,21 +54,29 @@ export default function ClosedPRsPage() {
       return matchAuthor && matchReviewer && matchStartDate && matchEndDate;
     });
 
+  // ソート関数
   const applySort = (prList: PullRequest[]): PullRequest[] =>
     [...prList].sort((a, b) => {
       if (sortBy === "recency") {
         const diff = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
         return sortOrder === "asc" ? diff : -diff;
       } else if (sortBy === "activity") {
-        const activityA = new Date(a.lastAction).getTime();
-        const activityB = new Date(b.lastAction).getTime();
+        // lastAction は文字列なので updatedAt で安全にソート
+        const activityA = new Date(a.updatedAt).getTime();
+        const activityB = new Date(b.updatedAt).getTime();
         return sortOrder === "asc" ? activityA - activityB : activityB - activityA;
       }
       return 0;
     });
 
   const filteredPRs = useMemo(() => applySort(applyFilters(prs)), [
-    prs, filterAuthor, filterReviewer, filterStartDate, filterEndDate, sortBy, sortOrder
+    prs,
+    filterAuthor,
+    filterReviewer,
+    filterStartDate,
+    filterEndDate,
+    sortBy,
+    sortOrder,
   ]);
 
   const paginatedPRs = filteredPRs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -84,7 +93,7 @@ export default function ClosedPRsPage() {
     setError("");
     try {
       const tokenParam = token && token.trim() ? `&token=${token}` : "";
-      const res = await fetch(`/api/closedPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit}`);
+      const res = await fetch(`/api/closedPR?owner=${owner}&repo=${repo}${tokenParam}&limit=${limit ?? ""}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "🚨 Unable to fetch pull requests.");
       setPrs(data.prs || []);
@@ -97,7 +106,6 @@ export default function ClosedPRsPage() {
     }
   };
 
-  // カードクリックでモーダルを開く
   const handlePRClick = (index: number) => {
     setCurrentPRIndex(index);
     setModalOpen(true);
@@ -136,13 +144,13 @@ export default function ClosedPRsPage() {
           value={limit === null ? "" : limit}
           onChange={(e) => {
             const value = e.target.value;
-            if (/^\d*$/.test(value)) setLimit(value === "" || Number(value) === 0 ? 0 : Number(value));
+            if (/^\d*$/.test(value)) setLimit(value === "" ? null : Number(value));
           }}
           className="border border-gray-300 rounded-md px-3 py-1.5 bg-white text-gray-900 font-sans focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none w-20"
         />
       </div>
 
-      <div className={`m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto`}>
+      <div className="m-8 mx-4 p-1 border border-gray-300 bg-white lg:max-w-4xl lg:mx-auto">
         <Box pos="relative">
           <LoadingOverlay visible={loading} overlayProps={{ radius: "sm", blur: 2 }} loaderProps={{ color: "purple", type: "bars" }} />
 
@@ -191,17 +199,10 @@ export default function ClosedPRsPage() {
         size="2lg"
         centered
         withCloseButton
-        overlayProps={{
-          color: "black",
-          opacity: 0.6,
-          blur: 3,
-        }}
+        overlayProps={{ color: "black", opacity: 0.6, blur: 3 }}
       >
-        {currentPRIndex !== null && (
-          <PRDetails 
-            pr={paginatedPRs[currentPRIndex]} 
-            allPRs={filteredPRs} 
-          />
+        {currentPRIndex !== null && paginatedPRs[currentPRIndex] && (
+          <PRDetails pr={paginatedPRs[currentPRIndex]} allPRs={filteredPRs} />
         )}
       </Modal>
     </div>

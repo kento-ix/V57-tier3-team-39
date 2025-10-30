@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, Text, Divider, Group, Badge } from "@mantine/core";
-import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,33 +36,12 @@ export default function PRDetails({ pr, allPRs = [] }: PRDetailsProps) {
   const prStatus =
     pr.state === "closed" ? (pr.mergedAt ? "✅ Merged" : "❌ Closed (Not Merged)") : "🟢 Open";
 
-  // チーム統計を計算
   const userStats: UserStats[] = calculateUserStats(allPRs);
 
-  // PR作成者とレビュー担当者を分離
   const authorStats = userStats.find(u => u.username === pr.author);
   const reviewerStats = userStats.filter(u =>
     pr.requested_reviewers.includes(u.username)
   );
-
-  // グラフ用データ（Contribution Score & Average Merge Days）
-  const chartData = {
-    labels: userStats.map(u => u.username),
-    datasets: [
-      {
-        label: "Contribution Score (高いほどチームへの貢献が大きい)",
-        data: userStats.map(u => u.contributionScore),
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderRadius: 4,
-      },
-      {
-        label: "Average Merge Days (小さいほどPRが早くマージされている)",
-        data: userStats.map(u => u.avgMergeDays),
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
-        borderRadius: 4,
-      },
-    ],
-  };
 
   const formatMergeDuration = (days: number) => {
     if (days < 1) {
@@ -92,26 +70,6 @@ export default function PRDetails({ pr, allPRs = [] }: PRDetailsProps) {
         </span>
       </span>
     );
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" as const },
-      tooltip: {
-        callbacks: {
-          label: (context: any) => {
-            if (context.dataset.label === "Contribution Score") {
-              return `Score: ${context.raw.toFixed(1)}`;
-            } else if (context.dataset.label === "Average Merge Days") {
-              return `Avg Merge Days: ${context.raw.toFixed(1)}`;
-            }
-            return context.raw;
-          },
-        },
-      },
-    },
-    scales: { y: { beginAtZero: true } },
   };
 
   return (
