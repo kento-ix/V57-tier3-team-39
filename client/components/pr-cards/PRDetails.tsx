@@ -181,17 +181,6 @@ export default function PRDetails({ pr, allPRs = [] }: PRDetailsProps) {
         </Group>
       )}
 
-      {/* Team Stats Graph */}
-      {userStats.length > 0 && (
-        <>
-          <Divider my="sm" />
-          <Text size="md" fw={600} mb="xs">Team Contribution & Merge Stats</Text>
-          <div style={{ maxHeight: 250, overflowX: "auto" }}>
-            <Bar data={chartData} options={chartOptions} />
-          </div>
-        </>
-      )}
-
       <Text size="sm" mt="sm">
         <a
           href={pr.url}

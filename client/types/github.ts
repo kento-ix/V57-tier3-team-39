@@ -29,3 +29,19 @@ export interface GitHubComment {
     created_at: string;
     id: number;
 }
+
+export interface GitHubCommit {
+  sha: string;
+  commit: {
+    message: string;
+    author: {
+      name: string;
+      email: string;
+      date: string;
+    };
+  };
+  author?: {
+    login: string;
+  };
+  url: string;
+}
