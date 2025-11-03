@@ -38,7 +38,14 @@ export default function PullRequestCardMobile({ pr, onSelect }: Props) {
           </Text>
           <div>{actionIcon()}</div>
           <Text fw={700}>
-            <span className="text-blue-600 block overflow-hidden whitespace-nowrap text-ellipsis max-w-[70vw]">{pr.title}</span>
+            <a
+              href={pr.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline block overflow-hidden whitespace-nowrap text-ellipsis max-w-[50vw] sm:max-w-[70vw]"
+            >
+              {pr.title}
+            </a>
           </Text>
         </div>
 

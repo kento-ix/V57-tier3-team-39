@@ -40,8 +40,16 @@ export default function PullRequestCardDesktop({ pr, onSelect }: Props) {
 
         <div className="mx-auto text-left max-w-lg">
           <Text fw={700}>
-            <span className="text-blue-600 block overflow-hidden whitespace-nowrap text-ellipsis max-w-[70vw]">{pr.title}</span>
+            <a
+              href={pr.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline block overflow-hidden whitespace-nowrap text-ellipsis max-w-[50vw] sm:max-w-[70vw]"
+            >
+              {pr.title}
+            </a>
           </Text>
+
           <div className="text-md" style={{ color: "#2D3748" }}>Opened by: @{pr.author ?? "Unknown"} . {createdText}</div>
           {!isClosedPR && <div className="text-md" style={{ color: "#2D3748" }}>Last Action: {pr.lastAction} by @{pr.lastActionUser ?? "Unknown"}</div>}
           {isClosedPR && isMergedPR && <div className="text-md" style={{ color: "#2D3748" }}>Merged: {mergedText}</div>}

@@ -16,7 +16,6 @@ import {
 import RepoSettingsForm from "@/components/form/RepoSettingForm";
 import PullRequestCard from "@/components/pr-cards/PullRequestCard";
 import Pagination from "@/components/button/Pagination";
-import PRDetails from "@/components/pr-cards/PRDetails";
 import type { PullRequest } from "@/types/pr";
 
 export default function ClosedPRsPage() {
@@ -30,7 +29,7 @@ export default function ClosedPRsPage() {
   const [limit, setLimit] = useState<number | null>(5);
   const [loading, setLoading] = useState(false);
 
-  // フィルタ・ソート状態
+  // filter and sort
   const [filterAuthor, setFilterAuthor] = useState<string>("");
   const [filterReviewer, setFilterReviewer] = useState<string>("");
   const [filterStartDate, setFilterStartDate] = useState<string>("");
@@ -38,13 +37,9 @@ export default function ClosedPRsPage() {
   const [sortBy, setSortBy] = useState<"recency" | "activity">("recency");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  // モーダル表示状態
-  const [modalOpen, setModalOpen] = useState(false);
-  const [currentPRIndex, setCurrentPRIndex] = useState<number | null>(null);
-
   const PAGE_SIZE = 3;
 
-  // フィルタ関数
+  // filter function
   const applyFilters = (prList: PullRequest[]): PullRequest[] =>
     prList.filter((pr) => {
       const matchAuthor = !filterAuthor || pr.author === filterAuthor;
@@ -54,14 +49,12 @@ export default function ClosedPRsPage() {
       return matchAuthor && matchReviewer && matchStartDate && matchEndDate;
     });
 
-  // ソート関数
   const applySort = (prList: PullRequest[]): PullRequest[] =>
     [...prList].sort((a, b) => {
       if (sortBy === "recency") {
         const diff = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
         return sortOrder === "asc" ? diff : -diff;
       } else if (sortBy === "activity") {
-        // lastAction は文字列なので updatedAt で安全にソート
         const activityA = new Date(a.updatedAt).getTime();
         const activityB = new Date(b.updatedAt).getTime();
         return sortOrder === "asc" ? activityA - activityB : activityB - activityA;
@@ -104,11 +97,6 @@ export default function ClosedPRsPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePRClick = (index: number) => {
-    setCurrentPRIndex(index);
-    setModalOpen(true);
   };
 
   return (
@@ -185,26 +173,12 @@ export default function ClosedPRsPage() {
 
           {/* PRカード一覧 */}
           {paginatedPRs.map((pr, idx) => (
-            <PullRequestCard key={pr.number} pr={pr} onSelect={() => handlePRClick(idx)} />
+            <PullRequestCard key={pr.number} pr={pr}/>
           ))}
         </Box>
       </div>
 
       {filteredPRs.length > 0 && <Pagination pageAtom={closedPageAtom} prsAtom={closedPRsAtom} />}
-
-      {/* モーダル */}
-      <Modal
-        opened={modalOpen}
-        onClose={() => setModalOpen(false)}
-        size="2lg"
-        centered
-        withCloseButton
-        overlayProps={{ color: "black", opacity: 0.6, blur: 3 }}
-      >
-        {currentPRIndex !== null && paginatedPRs[currentPRIndex] && (
-          <PRDetails pr={paginatedPRs[currentPRIndex]} allPRs={filteredPRs} />
-        )}
-      </Modal>
     </div>
   );
 }
